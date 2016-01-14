@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Budget Buddy</string>
+
+    <string name="title_activity_main">Budget Buddy</string>
+    <string name="title_activity_new_budget">Budget Buddy</string>
+
+    <string name="new_budget">Create New Budget</string>
+</resources>
