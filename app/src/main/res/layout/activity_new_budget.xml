@@ -25,22 +25,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Name"
-            android:id="@+id/tvBudgetName"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="0dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
             android:id="@+id/textView" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/editText"
-            android:layout_marginTop="0dp" />
+            android:layout_marginTop="0dp"
+            android:hint="Budget name" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -56,7 +48,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_weight="0.04"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:id="@+id/rdGroupDate">
 
 
         <RadioButton
@@ -80,7 +73,8 @@
             android:inputType="date"
             android:ems="10"
             android:id="@+id/etCreateBudgetStartDate"
-            android:visibility="invisible" />
+            android:visibility="gone"
+            android:hint="Start date" />
 
         <EditText
             android:layout_width="fill_parent"
@@ -88,7 +82,8 @@
             android:inputType="date"
             android:ems="10"
             android:id="@+id/etCreateBudgetEndDate"
-            android:visibility="invisible" />
+            android:visibility="gone"
+            android:hint="End date" />
 
         <Button
             android:layout_width="wrap_content"

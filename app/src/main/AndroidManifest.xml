@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="buddy.budget.com.budgetbuddy" >
 
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:allowBackup="true"
@@ -25,6 +25,14 @@
         <activity
             android:name="com.budget.buddy.NewBudgetActivity"
             android:label="@string/title_activity_new_budget"
+            android:parentActivityName="com.budget.buddy.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.budget.buddy.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.budget.buddy.SharesActivity"
+            android:label="@string/title_activity_shares"
             android:parentActivityName="com.budget.buddy.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
