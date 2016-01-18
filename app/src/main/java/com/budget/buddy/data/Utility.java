@@ -10,16 +10,18 @@ public class Utility {
     private static Properties projectProperties;
 
     static{
+/*
         projectProperties = new Properties();
 
         try {
-            InputStream in = Utility.class.getResourceAsStream("com.budget.buddy.data.settings");
+            InputStream in = Utility.class.getClassLoader().getResourceAsStream("settings.properties");
             projectProperties.load(in);
             in.close();
         }
         catch(Exception ex){
             ex.printStackTrace();
         }
+*/
     }
 
     public static String getData(String key){
