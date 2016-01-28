@@ -1,5 +1,7 @@
 package com.budget.buddy.data;
 
+import com.budget.buddy.com.budget.buddy.pojo.Customer;
+
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -8,6 +10,10 @@ import java.util.Properties;
  */
 public class Utility {
     private static Properties projectProperties;
+
+    public static Customer customer;
+
+    public static String server = "http://10.0.2.2/budget/public";
 
     static{
 /*

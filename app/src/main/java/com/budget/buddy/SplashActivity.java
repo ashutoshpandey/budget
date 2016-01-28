@@ -6,12 +6,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Toast;
 
+import com.budget.buddy.com.budget.buddy.pojo.Customer;
 import com.budget.buddy.data.TelephonyInfo;
 import com.budget.buddy.data.Utility;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -83,60 +85,42 @@ public class SplashActivity extends Activity {
 
     }
 
-    private void openApp(){
-        Intent i = new Intent(SplashActivity.this, MainActivity.class);
-        startActivity(i);
-    }
-
-    private void loadCustomerDataFromFile(){
-        try {
-            File budgetFile = new File(getFilesDir().getAbsolutePath() + "/budget.data");
-
-            if(budgetFile.exists()) {
-                BufferedReader br = new BufferedReader(new FileReader(budgetFile));
-                String data = br.readLine();
-
-                try {
-
-                } catch (Exception ex) {
-
-                }
-            }
-            else{
-                Intent i = new Intent(SplashActivity.this, WelcomeActivity.class);
-                startActivity(i);
-            }
-            // Set TextView text here using tv.setText(s);
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void loadCustomerDataFromServer() {
-System.out.println("loading from server");
+
         RequestParams params = new RequestParams();
-        params.put("id", 1);
+        params.put("id", String.valueOf(1));
 
         AsyncHttpClient client = new AsyncHttpClient();
-        //client.get(Utility.getData("site_url") + "/get-customer-info", params, new AsyncHttpResponseHandler() {
-        client.get("http://budget.dev" + "/get-customer-info", params, new AsyncHttpResponseHandler() {
+
+        client.get(Utility.server + "/get-customer-info", params, new AsyncHttpResponseHandler() {
             // When the response returned by REST has Http response code '200'
             @Override
             public void onSuccess(String response) {
                 try {
-                    System.out.println("Customer info = " + response);
-                    // JSON Object
                     JSONObject obj = new JSONObject(response);
-                    // When the JSON response has status boolean value assigned with true
-                    if (obj.getBoolean("status")) {
-                        Toast.makeText(getApplicationContext(), "You are successfully logged in!", Toast.LENGTH_LONG).show();
+
+                    if (obj.getString("message").equals("found")) {
+
+                        JSONObject customer = obj.getJSONObject("customer");
+
+                        String id = customer.getString("id");
+                        String name = customer.getString("name");
+                        String phone = customer.getString("photo");
+                        String photo = customer.getString("photo");
+                        String status = customer.getString("status");
+                        String createdAt = customer.getString("created_at");
+
+                        Utility.customer = new Customer(id, name, phone, photo, status, createdAt);
+
+                        Intent i = new Intent(SplashActivity.this, MainActivity.class);
+                        startActivity(i);
                     }
-                    // Else display error message
+                    else if (obj.getString("message").equals("empty")) {
+                        Intent i = new Intent(SplashActivity.this, WelcomeActivity.class);
+                        startActivity(i);
+                    }
                     else {
-                        Toast.makeText(getApplicationContext(), obj.getString("error_msg"), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Invalid data", Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
