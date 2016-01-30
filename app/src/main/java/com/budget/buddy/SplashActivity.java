@@ -96,12 +96,13 @@ public class SplashActivity extends Activity {
             // When the response returned by REST has Http response code '200'
             @Override
             public void onSuccess(String response) {
+
                 try {
                     JSONObject obj = new JSONObject(response);
-
                     if (obj.getString("message").equals("found")) {
 
-                        JSONObject customer = obj.getJSONObject("customer");
+                        JSONArray customerArray = obj.getJSONArray("customer");
+                        JSONObject customer = customerArray.getJSONObject(0);
 
                         String id = customer.getString("id");
                         String name = customer.getString("name");

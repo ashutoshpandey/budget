@@ -30,7 +30,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/editText"
+            android:id="@+id/etBudgetName"
             android:layout_marginTop="0dp"
             android:hint="Budget name" />
 
