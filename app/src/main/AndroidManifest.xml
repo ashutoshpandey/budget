@@ -43,6 +43,18 @@
             android:name="com.budget.buddy.WelcomeActivity"
             android:label="@string/title_activity_welcome" >
         </activity>
+        <activity
+            android:name="com.budget.buddy.AddBudgetItemActivity"
+            android:label="@string/title_activity_add_budget_item"
+            android:parentActivityName="com.budget.buddy.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.budget.buddy.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.budget.buddy.SingleBudgetActivity"
+            android:label="@string/title_activity_single_budget" >
+        </activity>
     </application>
 
 </manifest>

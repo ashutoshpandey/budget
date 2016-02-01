@@ -1,13 +1,20 @@
 package com.budget.buddy;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TabHost;
 import android.widget.Toast;
 
 import com.budget.buddy.data.Utility;
+import com.budget.buddy.fragments.FragmentBudget;
+import com.budget.buddy.fragments.FragmentBudgetShare;
+import com.budget.buddy.fragments.FragmentDashboard;
+import com.budget.buddy.fragments.TabListener;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -19,12 +26,47 @@ import buddy.budget.com.budgetbuddy.R;
 
 public class MainActivity extends Activity {
 
+    ActionBar.Tab Tab1, Tab2, Tab3;
+    Fragment fragmentTab1 = new FragmentDashboard();
+    Fragment fragmentTab2 = new FragmentBudget();
+    Fragment fragmentTab3 = new FragmentBudgetShare();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //loadCustomerData();
+        ActionBar actionBar = getActionBar();
+
+        // Hide Actionbar Icon
+        actionBar.setDisplayShowHomeEnabled(false);
+
+        // Hide Actionbar Title
+        actionBar.setDisplayShowTitleEnabled(false);
+
+        // Create Actionbar Tabs
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+        // Set Tab Icon and Titles
+/*
+        Tab1 = actionBar.newTab().setIcon(R.drawable.tab1);
+        Tab2 = actionBar.newTab().setText("Tab2");
+        Tab3 = actionBar.newTab().setText("Tab3");
+*/
+
+        Tab1 = actionBar.newTab().setText("Dashboard");
+        Tab2 = actionBar.newTab().setText("Budgets");
+        Tab3 = actionBar.newTab().setText("Sharing");
+
+        // Set Tab Listeners
+        Tab1.setTabListener(new TabListener(fragmentTab1));
+        Tab2.setTabListener(new TabListener(fragmentTab2));
+        Tab3.setTabListener(new TabListener(fragmentTab3));
+
+        // Add tabs to actionbar
+        actionBar.addTab(Tab1);
+        actionBar.addTab(Tab2);
+        actionBar.addTab(Tab3);
     }
 
     @Override

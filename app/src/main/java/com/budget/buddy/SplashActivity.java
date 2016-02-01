@@ -3,10 +3,11 @@ package com.budget.buddy;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.widget.Toast;
 
-import com.budget.buddy.com.budget.buddy.pojo.Customer;
+import com.budget.buddy.pojo.Budget;
+import com.budget.buddy.pojo.BudgetShare;
+import com.budget.buddy.pojo.Customer;
 import com.budget.buddy.data.TelephonyInfo;
 import com.budget.buddy.data.Utility;
 import com.loopj.android.http.AsyncHttpClient;
@@ -17,12 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.util.ArrayList;
 
 import buddy.budget.com.budgetbuddy.R;
 
@@ -113,6 +109,9 @@ public class SplashActivity extends Activity {
 
                         Utility.customer = new Customer(id, name, phone, photo, status, createdAt);
 
+                        loadCustomerBudgetsFromServer();
+                        loadCustomerBudgetSharesFromServer();
+
                         Intent i = new Intent(SplashActivity.this, MainActivity.class);
                         startActivity(i);
                     }
@@ -149,4 +148,135 @@ public class SplashActivity extends Activity {
         });
     }
 
+    private void loadCustomerBudgetsFromServer() {
+
+        RequestParams params = new RequestParams();
+        params.put("customer_id", String.valueOf(Utility.customer.getId()));
+
+        AsyncHttpClient client = new AsyncHttpClient();
+
+        client.get(Utility.server + "/all-budgets", params, new AsyncHttpResponseHandler() {
+            // When the response returned by REST has Http response code '200'
+            @Override
+            public void onSuccess(String response) {
+
+                try {
+                    JSONObject obj = new JSONObject(response);
+                    if (obj.getString("message").equals("found")) {
+
+                        JSONArray budgetsArray = obj.getJSONArray("budgets");
+
+                        ArrayList<Budget> budgets = new ArrayList<Budget>();
+
+                        for(int i=0;i<budgetsArray.length();i++){
+                            JSONObject budgetJSON = budgetsArray.getJSONObject(i);
+
+                            Budget budget = new Budget();
+
+                            budget.setId(budgetJSON.getInt("id"));
+                            budget.setName(budgetJSON.getString("name"));
+
+                            budgets.add(budget);
+                        }
+
+                        Utility.budgets = budgets;
+                    }
+                    else if (obj.getString("message").equals("empty")) {
+                        Intent i = new Intent(SplashActivity.this, WelcomeActivity.class);
+                        startActivity(i);
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(), "Invalid data", Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
+            }
+
+            // When the response returned by REST has Http response code other than '200'
+            @Override
+            public void onFailure(int statusCode, Throwable error,
+                                  String content) {
+                // When Http response code is '404'
+                if (statusCode == 404) {
+                    Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
+                }
+                // When Http response code is '500'
+                else if (statusCode == 500) {
+                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+                }
+                // When Http response code other than 404, 500
+                else {
+                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    private void loadCustomerBudgetSharesFromServer() {
+
+        RequestParams params = new RequestParams();
+        params.put("customer_id", String.valueOf(Utility.customer.getId()));
+
+        AsyncHttpClient client = new AsyncHttpClient();
+
+        client.get(Utility.server + "/all-budget-shares", params, new AsyncHttpResponseHandler() {
+            // When the response returned by REST has Http response code '200'
+            @Override
+            public void onSuccess(String response) {
+
+                try {
+                    JSONObject obj = new JSONObject(response);
+                    if (obj.getString("message").equals("found")) {
+
+                        JSONArray budgetSharesArray = obj.getJSONArray("budgetShares");
+
+                        ArrayList<BudgetShare> budgetShares = new ArrayList<BudgetShare>();
+
+                        for(int i=0;i<budgetSharesArray.length();i++){
+                            JSONObject budgetJSON = budgetSharesArray.getJSONObject(i);
+
+                            BudgetShare budgetShare = new BudgetShare();
+
+                            budgetShare.setId(budgetJSON.getInt("id"));
+                            budgetShare.setName(budgetJSON.getString("name"));
+
+                            budgetShares.add(budgetShare);
+                        }
+
+                        Utility.budgetShares = budgetShares;
+                    }
+                    else if (obj.getString("message").equals("empty")) {
+                        Intent i = new Intent(SplashActivity.this, WelcomeActivity.class);
+                        startActivity(i);
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(), "Invalid data", Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
+            }
+
+            // When the response returned by REST has Http response code other than '200'
+            @Override
+            public void onFailure(int statusCode, Throwable error,
+                                  String content) {
+                // When Http response code is '404'
+                if (statusCode == 404) {
+                    Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
+                }
+                // When Http response code is '500'
+                else if (statusCode == 500) {
+                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+                }
+                // When Http response code other than 404, 500
+                else {
+                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
 }

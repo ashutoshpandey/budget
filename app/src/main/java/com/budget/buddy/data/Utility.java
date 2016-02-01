@@ -1,8 +1,11 @@
 package com.budget.buddy.data;
 
-import com.budget.buddy.com.budget.buddy.pojo.Customer;
+import com.budget.buddy.pojo.Budget;
+import com.budget.buddy.pojo.BudgetShare;
+import com.budget.buddy.pojo.Customer;
 
-import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -14,6 +17,11 @@ public class Utility {
     public static Customer customer;
 
     public static String server = "http://10.0.2.2/budget/public";
+
+    public static int currentBudgetId;
+
+    public static List<Budget> budgets = new ArrayList<Budget>();
+    public static List<BudgetShare> budgetShares = new ArrayList<BudgetShare>();
 
     static{
 /*

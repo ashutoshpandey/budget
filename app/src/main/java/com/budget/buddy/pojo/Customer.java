@@ -1,4 +1,4 @@
-package com.budget.buddy.com.budget.buddy.pojo;
+package com.budget.buddy.pojo;
 
 public class Customer {
 
