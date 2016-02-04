@@ -1,6 +1,7 @@
 package com.budget.buddy.adapter;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,6 +47,10 @@ public class BudgetItemAdapter extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
+        inflater = ( LayoutInflater )activity.
+                getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
         ViewHolder holder=new ViewHolder();
         View rowView;
         rowView = inflater.inflate(R.layout.budget_item, null);

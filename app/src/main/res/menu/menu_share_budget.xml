@@ -1,0 +1,6 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.budget.buddy.ShareBudgetActivity">
+    <item android:id="@+id/action_share_budget" android:title="Share"
+        android:orderInCategory="100" android:showAsAction="never" />
+</menu>

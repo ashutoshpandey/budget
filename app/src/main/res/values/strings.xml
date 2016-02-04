@@ -10,6 +10,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_welcome">WelcomeActivity</string>
-    <string name="title_activity_add_budget_item">AddBudgetItemActivity</string>
-    <string name="title_activity_single_budget">Budget Info</string>
+    <string name="title_activity_add_budget_item">Add new item</string>
+    <string name="title_activity_single_budget">Budget info</string>
+    <string name="title_activity_share_budget">Share this budget</string>
 </resources>

@@ -56,7 +56,7 @@ public class FragmentBudget extends Fragment{
                 // ListView Clicked item value
                 //String  itemValue    = (String) listView.getItemAtPosition(position);
                 Utility.currentBudgetId = Utility.budgets.get(itemPosition).getId();
-
+System.out.println("Current budget id = " + Utility.currentBudgetId);
                 Intent i = new Intent(getActivity(), SingleBudgetActivity.class);
                 startActivity(i);
             }

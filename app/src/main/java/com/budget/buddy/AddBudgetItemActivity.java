@@ -59,8 +59,8 @@ public class AddBudgetItemActivity extends Activity {
         String price = etPrice.getText().toString();
         String date = etDate.getText().toString();
 
+        params.put("budget_id", String.valueOf(Utility.currentBudgetId));
         params.put("customer_id", Utility.customer.getId());
-        params.put("budget_id", Utility.currentBudgetId);
         params.put("name", name);
         params.put("price", price);
         params.put("date", date);

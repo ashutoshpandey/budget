@@ -15,12 +15,16 @@ import com.budget.buddy.fragments.FragmentBudget;
 import com.budget.buddy.fragments.FragmentBudgetShare;
 import com.budget.buddy.fragments.FragmentDashboard;
 import com.budget.buddy.fragments.TabListener;
+import com.budget.buddy.pojo.BudgetShare;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 import buddy.budget.com.budgetbuddy.R;
 
@@ -105,5 +109,66 @@ public class MainActivity extends Activity {
 
     private void logout(){
         finish();
+    }
+
+    private void syncContacts() {
+
+        RequestParams params = new RequestParams();
+        params.put("customer_id", String.valueOf(Utility.customer.getId()));
+
+        AsyncHttpClient client = new AsyncHttpClient();
+
+        client.get(Utility.server + "/all-budget-shares", params, new AsyncHttpResponseHandler() {
+            // When the response returned by REST has Http response code '200'
+            @Override
+            public void onSuccess(String response) {
+
+                try {
+                    JSONObject obj = new JSONObject(response);
+                    if (obj.getString("message").equals("found")) {
+
+                        JSONArray budgetSharesArray = obj.getJSONArray("budgetShares");
+
+                        ArrayList<BudgetShare> budgetShares = new ArrayList<BudgetShare>();
+
+                        for (int i = 0; i < budgetSharesArray.length(); i++) {
+                            JSONObject budgetJSON = budgetSharesArray.getJSONObject(i);
+
+                            BudgetShare budgetShare = new BudgetShare();
+
+                            budgetShare.setId(budgetJSON.getInt("id"));
+                            budgetShare.setName(budgetJSON.getString("name"));
+
+                            budgetShares.add(budgetShare);
+                        }
+
+                        Utility.budgetShares = budgetShares;
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Invalid data", Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
+            }
+
+            // When the response returned by REST has Http response code other than '200'
+            @Override
+            public void onFailure(int statusCode, Throwable error,
+                                  String content) {
+                // When Http response code is '404'
+                if (statusCode == 404) {
+                    Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
+                }
+                // When Http response code is '500'
+                else if (statusCode == 500) {
+                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+                }
+                // When Http response code other than 404, 500
+                else {
+                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 }

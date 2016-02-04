@@ -1,9 +1,16 @@
 package com.budget.buddy;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,6 +20,7 @@ import com.budget.buddy.pojo.Budget;
 import com.budget.buddy.pojo.BudgetItem;
 import com.budget.buddy.pojo.BudgetShare;
 import com.budget.buddy.data.Utility;
+import com.budget.buddy.pojo.Customer;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -54,6 +62,118 @@ public class SingleBudgetActivity extends Activity {
         listView.setAdapter(adapter);
 
         initializeData();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_single_budget, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        switch (id){
+            case R.id.menu_new_item:
+                addItem();
+                break;
+
+            case R.id.menu_share:
+                shareBudget();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void shareBudget() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter other person customer id");
+
+// Set up the input
+        final EditText input = new EditText(this);
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        builder.setView(input);
+
+// Set up the buttons
+        builder.setPositiveButton("Share", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String m_Text = input.getText().toString();
+
+                shareBudgetNow(m_Text);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        builder.show();
+    }
+
+    private void shareBudgetNow(String toCustomerId) {
+        RequestParams params = new RequestParams();
+        params.put("to_customer_id", toCustomerId);
+        params.put("from_customer_id", Utility.customer.getId());
+
+        AsyncHttpClient client = new AsyncHttpClient();
+
+        client.get(Utility.server + "/share-budget", params, new AsyncHttpResponseHandler() {
+            // When the response returned by REST has Http response code '200'
+            @Override
+            public void onSuccess(String response) {
+
+                try {
+                    JSONObject obj = new JSONObject(response);
+                    if (obj.getString("message").equals("found")) {
+                        Toast.makeText(getApplicationContext(), "You shared your budget with this person", Toast.LENGTH_LONG).show();
+                    }
+                    else if (obj.getString("message").equals("duplicate")) {
+                        Toast.makeText(getApplicationContext(), "This budget is already shared", Toast.LENGTH_LONG).show();
+                    }
+                    else if (obj.getString("message").equals("invalid")) {
+                        Toast.makeText(getApplicationContext(), "Invalid customer id", Toast.LENGTH_LONG).show();
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(), "Invalid data", Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
+            }
+
+            // When the response returned by REST has Http response code other than '200'
+            @Override
+            public void onFailure(int statusCode, Throwable error,
+                                  String content) {
+                // When Http response code is '404'
+                if (statusCode == 404) {
+                    Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
+                }
+                // When Http response code is '500'
+                else if (statusCode == 500) {
+                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+                }
+                // When Http response code other than 404, 500
+                else {
+                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    private void addItem() {
+        Intent i = new Intent(SingleBudgetActivity.this, AddBudgetItemActivity.class);
+        startActivity(i);
     }
 
     private void initializeData() {
