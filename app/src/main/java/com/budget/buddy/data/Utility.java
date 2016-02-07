@@ -5,7 +5,9 @@ import com.budget.buddy.pojo.BudgetShare;
 import com.budget.buddy.pojo.Customer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -14,14 +16,15 @@ import java.util.Properties;
 public class Utility {
     private static Properties projectProperties;
 
+    public static String customerId;
     public static Customer customer;
 
     public static String server = "http://10.0.2.2/budget/public";
 
     public static int currentBudgetId;
 
-    public static List<Budget> budgets = new ArrayList<Budget>();
-    public static List<BudgetShare> budgetShares = new ArrayList<BudgetShare>();
+    public static Map<Integer,Budget> budgets = new HashMap<Integer,Budget>();
+    public static Map<Integer,BudgetShare> budgetShares = new HashMap<Integer,BudgetShare>();
 
     static{
 /*

@@ -38,6 +38,7 @@ public class SingleBudgetActivity extends Activity {
     private TextView tvBudgetAmount;
     private TextView tvCurrentAmount;
     private TextView tvBudgetName;
+    private TextView tvBudgetItems;
 
     private ListView listView;
 
@@ -52,6 +53,7 @@ public class SingleBudgetActivity extends Activity {
         tvBudgetAmount = (TextView)findViewById(R.id.tvBudgetAmount);
         tvCurrentAmount = (TextView)findViewById(R.id.tvCurrentAmount);
         tvBudgetName = (TextView)findViewById(R.id.tvBudgetName);
+        tvBudgetItems = (TextView)findViewById(R.id.tvBudgetItems);
 
         listView = (ListView)findViewById(R.id.listView);
 
@@ -60,6 +62,11 @@ public class SingleBudgetActivity extends Activity {
 
         // Assign adapter to ListView
         listView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
 
         initializeData();
     }
@@ -83,6 +90,10 @@ public class SingleBudgetActivity extends Activity {
                 addItem();
                 break;
 
+            case R.id.menu_edit_budget:
+                editBudget();
+                break;
+
             case R.id.menu_share:
                 shareBudget();
                 break;
@@ -91,17 +102,20 @@ public class SingleBudgetActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void editBudget() {
+        Intent i = new Intent(getApplicationContext(), EditBudgetActivity.class);
+        startActivity(i);
+    }
+
     private void shareBudget() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Enter other person customer id");
 
-// Set up the input
         final EditText input = new EditText(this);
-// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         builder.setView(input);
 
-// Set up the buttons
         builder.setPositiveButton("Share", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -177,6 +191,7 @@ public class SingleBudgetActivity extends Activity {
     }
 
     private void initializeData() {
+
         Budget budget = Utility.budgets.get(Utility.currentBudgetId);
 
         if(budget!=null){
@@ -223,13 +238,19 @@ public class SingleBudgetActivity extends Activity {
                             budgetItems.add(budgetItem);
                         }
 
-                        tvCurrentAmount.setVisibility(View.VISIBLE);
-                        listView.setVisibility(View.VISIBLE);
+                        if(budgetItems.isEmpty()){
+                            tvBudgetItems.setVisibility(View.GONE);
+                            listView.setVisibility(View.GONE);
+                        }
+                        else {
+                            tvBudgetItems.setVisibility(View.GONE);
+                            listView.setVisibility(View.VISIBLE);
+                        }
 
                         tvCurrentAmount.setText(String.valueOf(currentAmount));
 
                     } else if (obj.getString("message").equals("empty")) {
-                        tvCurrentAmount.setVisibility(View.GONE);
+                        tvBudgetItems.setVisibility(View.GONE);
                         listView.setVisibility(View.GONE);
                     } else {
                         Toast.makeText(getApplicationContext(), "Invalid data", Toast.LENGTH_LONG).show();

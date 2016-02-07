@@ -4,7 +4,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.budget.buddy.NewBudgetActivity">
+    tools:context="com.budget.buddy.EditBudgetActivity">
 
     <LinearLayout
         android:orientation="vertical"
@@ -18,8 +18,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/new_budget"
-            android:id="@+id/tvNewBudget" />
+            android:text="@string/update_budget"
+            android:id="@+id/tvUpdateBudget" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -30,14 +30,14 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/etBudgetName"
+            android:id="@+id/etUpdateBudgetName"
             android:layout_marginTop="0dp"
             android:hint="Budget name" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/etBudgetLimit"
+            android:id="@+id/etUpdateBudgetLimit"
             android:layout_marginTop="20dp"
             android:hint="Limit" />
 
@@ -46,7 +46,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Type"
-            android:id="@+id/tvBudgetType"
+            android:id="@+id/tvUpdateBudgetType"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="10dp" />
 
@@ -56,21 +56,20 @@
             android:layout_gravity="center_horizontal"
             android:layout_weight="0.04"
             android:orientation="horizontal"
-            android:id="@+id/rdGroupDate">
-
+            android:id="@+id/rdUpdateGroupDate">
 
         <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Monthly"
-                android:id="@+id/rdBudgetTypeMonthly"
+                android:id="@+id/rdUpdateBudgetTypeMonthly"
                 android:checked="true" />
 
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Date Range"
-                android:id="@+id/rdBudgetTypeDateRange"
+                android:id="@+id/rdUpdateBudgetTypeDateRange"
                 android:layout_marginLeft="20dp" />
         </RadioGroup>
 
@@ -79,7 +78,7 @@
             android:layout_height="wrap_content"
             android:inputType="date"
             android:ems="10"
-            android:id="@+id/etCreateBudgetStartDate"
+            android:id="@+id/etUpdateBudgetStartDate"
             android:visibility="gone"
             android:hint="Start date" />
 
@@ -88,22 +87,22 @@
             android:layout_height="wrap_content"
             android:inputType="date"
             android:ems="10"
-            android:id="@+id/etCreateBudgetEndDate"
+            android:id="@+id/etUpdateBudgetEndDate"
             android:visibility="gone"
             android:hint="End date" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Create Budget"
-            android:id="@+id/btnCreateBudget"
+            android:text="Update Budget"
+            android:id="@+id/btnUpdateBudget"
             android:layout_marginTop="20dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:id="@+id/tvBudgetMessage"
+            android:id="@+id/tvUpdateBudgetMessage"
             android:layout_marginTop="20dp" />
 
     </LinearLayout>

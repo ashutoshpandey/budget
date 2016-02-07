@@ -11,6 +11,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.budget.buddy.data.Utility;
+import com.budget.buddy.pojo.Budget;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -24,7 +25,7 @@ import java.util.Locale;
 
 import buddy.budget.com.budgetbuddy.R;
 
-public class NewBudgetActivity extends Activity {
+public class EditBudgetActivity extends Activity {
 
     private EditText etStartDate;
     private EditText etEndDate;
@@ -33,33 +34,35 @@ public class NewBudgetActivity extends Activity {
 
     private RadioGroup rdGroupDate;
 
-    private Button btnCreateBudget;
+    private Button btnUpdateBudget;
 
     final Calendar myCalendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_budget);
+        setContentView(R.layout.activity_edit_budget);
 
-        etBudgetName = (EditText)findViewById(R.id.etBudgetName);
-        etStartDate = (EditText)findViewById(R.id.etCreateBudgetStartDate);
-        etEndDate = (EditText)findViewById(R.id.etCreateBudgetEndDate);
-        etBudgetLimit = (EditText)findViewById(R.id.etBudgetLimit);
+        etBudgetName = (EditText)findViewById(R.id.etUpdateBudgetName);
+        etBudgetLimit = (EditText)findViewById(R.id.etUpdateBudgetLimit);
+        etStartDate = (EditText)findViewById(R.id.etUpdateBudgetStartDate);
+        etEndDate = (EditText)findViewById(R.id.etUpdateBudgetEndDate);
 
-        btnCreateBudget = (Button)findViewById(R.id.btnCreateBudget);
+        btnUpdateBudget = (Button)findViewById(R.id.btnUpdateBudget);
 
-        rdGroupDate = (RadioGroup)findViewById(R.id.rdGroupDate);
+        rdGroupDate = (RadioGroup)findViewById(R.id.rdUpdateGroupDate);
+
+        loadBudget();
 
         initializeEvents();
     }
 
     private void initializeEvents() {
 
-        btnCreateBudget.setOnClickListener(new View.OnClickListener() {
+        btnUpdateBudget.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createBudget();
+                updateBudget();
             }
         });
 
@@ -95,7 +98,7 @@ public class NewBudgetActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                new DatePickerDialog(NewBudgetActivity.this, dateStart, myCalendar
+                new DatePickerDialog(EditBudgetActivity.this, dateStart, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
@@ -105,7 +108,7 @@ public class NewBudgetActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                new DatePickerDialog(NewBudgetActivity.this, dateStart, myCalendar
+                new DatePickerDialog(EditBudgetActivity.this, dateStart, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
@@ -127,6 +130,15 @@ public class NewBudgetActivity extends Activity {
         });
     }
 
+    private void loadBudget(){
+        Budget budget = Utility.budgets.get(Utility.currentBudgetId);
+
+        if(budget!=null){
+            etBudgetName.setText(budget.getName());
+            etBudgetLimit.setText(String.valueOf(budget.getMaxAmount()));
+        }
+    }
+
     private void setStartDate() {
 
         String myFormat = "MM/dd/yy"; //In which you need put here
@@ -143,18 +155,18 @@ public class NewBudgetActivity extends Activity {
         etEndDate.setText(sdf.format(myCalendar.getTime()));
     }
 
-    private void createBudget() {
+    private void updateBudget() {
 
         RequestParams params = new RequestParams();
 
-        String name = etBudgetName.getText().toString();
-        String maxAmount = etBudgetLimit.getText().toString();
+        final String name = etBudgetName.getText().toString();
+        final String maxAmount = etBudgetLimit.getText().toString();
 
-        params.put("customer_id", Utility.customer.getId());
+        params.put("budget_id", String.valueOf(Utility.currentBudgetId));
         params.put("name", name);
         params.put("max_amount", maxAmount);
 
-        if(rdGroupDate.getCheckedRadioButtonId()==R.id.rdBudgetTypeMonthly){
+        if(rdGroupDate.getCheckedRadioButtonId()==R.id.rdUpdateBudgetTypeMonthly){
             params.put("budget_type", "monthly");
         }
         else{
@@ -169,7 +181,7 @@ public class NewBudgetActivity extends Activity {
 
         AsyncHttpClient client = new AsyncHttpClient();
 
-        client.post(Utility.server + "/create-budget", params, new AsyncHttpResponseHandler() {
+        client.post(Utility.server + "/update-budget", params, new AsyncHttpResponseHandler() {
             // When the response returned by REST has Http response code '200'
             @Override
             public void onSuccess(String response) {
@@ -177,12 +189,11 @@ public class NewBudgetActivity extends Activity {
                 try {
                     JSONObject obj = new JSONObject(response);
                     if (obj.getString("message").equals("done")) {
-                        Toast.makeText(getApplicationContext(), "Budget created", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Budget updated", Toast.LENGTH_LONG).show();
 
-                        etBudgetName.setText("");
-                        etStartDate.setText("");
-                        etEndDate.setText("");
-                        rdGroupDate.check(R.id.rdBudgetTypeMonthly);
+                        Budget budget = Utility.budgets.get(Utility.currentBudgetId);
+                        budget.setName(name);
+                        budget.setMaxAmount(Double.parseDouble(maxAmount));
 
                     } else if (obj.getString("message").equals("duplicate")) {
                         Toast.makeText(getApplicationContext(), "Duplicate budget name", Toast.LENGTH_LONG).show();

@@ -7,18 +7,16 @@ public class Budget {
 
     private int id;
     private int customerId;
+    private double maxAmount;
+    private String name;
 
-    public float getMaxAmount() {
+    public double getMaxAmount() {
         return maxAmount;
     }
 
-    public void setMaxAmount(float maxAmount) {
+    public void setMaxAmount(double maxAmount) {
         this.maxAmount = maxAmount;
     }
-
-    private float maxAmount;
-
-    private String name;
 
     public int getId() {
         return id;

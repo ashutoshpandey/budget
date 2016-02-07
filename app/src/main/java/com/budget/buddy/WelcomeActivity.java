@@ -1,19 +1,29 @@
 package com.budget.buddy;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.budget.buddy.data.Utility;
+import com.budget.buddy.pojo.Customer;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 import buddy.budget.com.budgetbuddy.R;
 
@@ -52,29 +62,52 @@ public class WelcomeActivity extends Activity {
         params.put("phone", phone);
 
         AsyncHttpClient client = new AsyncHttpClient();
-        client.get(Utility.getData("site_url") + "/create-customer", params, new AsyncHttpResponseHandler() {
+        client.post(Utility.server + "/create-customer", params, new AsyncHttpResponseHandler() {
             // When the response returned by REST has Http response code '200'
             public void onSuccess(String response) {
+                System.out.println(response);
                 try {
-                    System.out.println("Got response from server");
-                    System.out.println(response);
                     // JSON Object
                     JSONObject obj = new JSONObject(response);
                     // When the JSON response has status boolean value assigned with true
-                    if (obj.getBoolean("status")) {
-                        Toast.makeText(getApplicationContext(), "You are successfully logged in!", Toast.LENGTH_LONG).show();
-                    }
-                    // Else display error message
-                    else {
-                        Toast.makeText(getApplicationContext(), obj.getString("error_msg"), Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-                }
-            }
 
-            // When the response returned by REST has Http response code other than '200'
+                    if (obj.getString("message").equals("done")) {
+
+                        //JSONArray customerArray = obj.getJSONArray("customer");
+                        //JSONObject customer = customerArray.getJSONObject(0);
+                        JSONObject customer = obj.getJSONObject("customer");
+
+                        String id = customer.getString("id");
+                        String name = customer.getString("name");
+                        String phone = customer.getString("photo");
+                        String photo = customer.getString("photo");
+                        String status = customer.getString("status");
+                        String createdAt = customer.getString("created_at");
+
+                        Utility.customerId = id;
+                        Utility.customer = new Customer(id, name, phone, photo, status, createdAt);
+
+                        writeCustomerDataToFile();
+
+                        Toast.makeText(getApplicationContext(), "You are successfully registered", Toast.LENGTH_LONG).show();
+
+                        Intent i = new Intent(WelcomeActivity.this, MainActivity.class);
+                        startActivity(i);
+                    }
+                    else if (obj.getString("message").equals("duplicate")) {
+                        Toast.makeText(getApplicationContext(), "This phone number is already registered", Toast.LENGTH_LONG).show();
+                    }
+                    else{
+                        Toast.makeText(getApplicationContext(), "Cannot connect to server", Toast.LENGTH_LONG).show();
+                    }
+                    }catch(JSONException e){
+                        Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }
+                }
+
+                // When the response returned by REST has Http response code other than '200'
+
             public void onFailure(int statusCode, Throwable error,
                                   String content) {
                 // When Http response code is '404'
@@ -91,5 +124,25 @@ public class WelcomeActivity extends Activity {
                 }
             }
         });
+    }
+
+    private void writeCustomerDataToFile() {
+        File sdcard = Environment.getExternalStorageDirectory();
+
+        File file = new File(sdcard, "budget.dat");
+
+        DataOutputStream dout = null;
+        try {
+            dout = new DataOutputStream(new FileOutputStream(file));
+
+            dout.writeUTF(Utility.customerId);
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "Application needs file permission", Toast.LENGTH_LONG).show();
+        } finally {
+            try {
+                dout.close();
+            } catch (Exception ex) {
+            }
+        }
     }
 }

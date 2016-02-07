@@ -11,10 +11,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.budget.buddy.SingleBudgetActivity;
+import com.budget.buddy.pojo.Budget;
 import com.budget.buddy.pojo.BudgetShare;
 import com.budget.buddy.data.Utility;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import buddy.budget.com.budgetbuddy.R;
 
@@ -33,8 +35,9 @@ public class FragmentBudgetShare extends Fragment{
         listView = (ListView) rootView.findViewById(R.id.listViewBudgets);
 
         ArrayList<String> budgetNames = new ArrayList<String>();
-        for(BudgetShare budgetShare : Utility.budgetShares)
-            budgetNames.add(budgetShare.getName());
+
+        for(Map.Entry<Integer, BudgetShare> entry : Utility.budgetShares.entrySet())
+            budgetNames.add(entry.getValue().getName());
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, budgetNames);

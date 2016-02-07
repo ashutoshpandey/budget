@@ -3,7 +3,10 @@
     tools:context="com.budget.buddy.SingleBudgetActivity">
 
     <item android:id="@+id/menu_new_item"
-        android:title="New" />
+        android:title="New Entry" />
+
+    <item android:id="@+id/menu_edit_budget"
+        android:title="Edit" />
 
     <item android:id="@+id/menu_share"
         android:title="Share" />

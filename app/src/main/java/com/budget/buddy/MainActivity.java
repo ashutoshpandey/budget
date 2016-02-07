@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TabHost;
 import android.widget.Toast;
 
 import com.budget.buddy.data.Utility;
@@ -15,6 +14,7 @@ import com.budget.buddy.fragments.FragmentBudget;
 import com.budget.buddy.fragments.FragmentBudgetShare;
 import com.budget.buddy.fragments.FragmentDashboard;
 import com.budget.buddy.fragments.TabListener;
+import com.budget.buddy.pojo.Budget;
 import com.budget.buddy.pojo.BudgetShare;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -24,16 +24,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import buddy.budget.com.budgetbuddy.R;
 
 public class MainActivity extends Activity {
 
     ActionBar.Tab Tab1, Tab2, Tab3;
-    Fragment fragmentTab1 = new FragmentDashboard();
-    Fragment fragmentTab2 = new FragmentBudget();
-    Fragment fragmentTab3 = new FragmentBudgetShare();
+    Fragment fragmentDashboard = new FragmentDashboard();
+    Fragment fragmentBudget = new FragmentBudget();
+    Fragment fragmentBudgetShare = new FragmentBudgetShare();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,14 +63,17 @@ public class MainActivity extends Activity {
         Tab3 = actionBar.newTab().setText("Sharing");
 
         // Set Tab Listeners
-        Tab1.setTabListener(new TabListener(fragmentTab1));
-        Tab2.setTabListener(new TabListener(fragmentTab2));
-        Tab3.setTabListener(new TabListener(fragmentTab3));
+        Tab1.setTabListener(new TabListener(fragmentDashboard));
+        Tab2.setTabListener(new TabListener(fragmentBudget));
+        Tab3.setTabListener(new TabListener(fragmentBudgetShare));
 
         // Add tabs to actionbar
         actionBar.addTab(Tab1);
         actionBar.addTab(Tab2);
         actionBar.addTab(Tab3);
+
+        loadCustomerBudgetsFromServer();
+        loadCustomerBudgetSharesFromServer();
     }
 
     @Override
@@ -111,10 +114,10 @@ public class MainActivity extends Activity {
         finish();
     }
 
-    private void syncContacts() {
+    private void loadCustomerBudgetSharesFromServer() {
 
         RequestParams params = new RequestParams();
-        params.put("customer_id", String.valueOf(Utility.customer.getId()));
+        params.put("customer_id", String.valueOf(Utility.customerId));
 
         AsyncHttpClient client = new AsyncHttpClient();
 
@@ -129,7 +132,7 @@ public class MainActivity extends Activity {
 
                         JSONArray budgetSharesArray = obj.getJSONArray("budgetShares");
 
-                        ArrayList<BudgetShare> budgetShares = new ArrayList<BudgetShare>();
+                        HashMap<Integer, BudgetShare> budgetShares = new HashMap<Integer, BudgetShare>();
 
                         for (int i = 0; i < budgetSharesArray.length(); i++) {
                             JSONObject budgetJSON = budgetSharesArray.getJSONObject(i);
@@ -139,7 +142,7 @@ public class MainActivity extends Activity {
                             budgetShare.setId(budgetJSON.getInt("id"));
                             budgetShare.setName(budgetJSON.getString("name"));
 
-                            budgetShares.add(budgetShare);
+                            budgetShares.put(budgetShare.getId(), budgetShare);
                         }
 
                         Utility.budgetShares = budgetShares;
@@ -170,5 +173,78 @@ public class MainActivity extends Activity {
                 }
             }
         });
+    }
+
+    private void loadCustomerBudgetsFromServer() {
+
+        if(Utility.customer==null)
+            return;
+
+        RequestParams params = new RequestParams();
+        params.put("customer_id", String.valueOf(Utility.customerId));
+
+        AsyncHttpClient client = new AsyncHttpClient();
+
+        client.get(Utility.server + "/all-budgets", params, new AsyncHttpResponseHandler() {
+            // When the response returned by REST has Http response code '200'
+            @Override
+            public void onSuccess(String response) {
+
+                try {
+                    JSONObject obj = new JSONObject(response);
+                    if (obj.getString("message").equals("found")) {
+
+                        JSONArray budgetsArray = obj.getJSONArray("budgets");
+
+                        HashMap<Integer, Budget> budgets = new HashMap<Integer, Budget>();
+
+                        for (int i = 0; i < budgetsArray.length(); i++) {
+                            JSONObject budgetJSON = budgetsArray.getJSONObject(i);
+
+                            Budget budget = new Budget();
+
+                            budget.setId(budgetJSON.getInt("id"));
+                            budget.setName(budgetJSON.getString("name"));
+                            budget.setMaxAmount(budgetJSON.getDouble("max_amount"));
+
+                            budgets.put(budget.getId(), budget);
+                        }
+
+                        Utility.budgets = budgets;
+
+                        setBudgetCount();
+
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Invalid data", Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
+            }
+
+            // When the response returned by REST has Http response code other than '200'
+            @Override
+            public void onFailure(int statusCode, Throwable error,
+                                  String content) {
+                // When Http response code is '404'
+                if (statusCode == 404) {
+                    Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
+                }
+                // When Http response code is '500'
+                else if (statusCode == 500) {
+                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+                }
+                // When Http response code other than 404, 500
+                else {
+                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    public void setBudgetCount() {
+        System.out.println("Calling fragment dashboard");
+        ((FragmentDashboard)fragmentDashboard).setBudgetCount();
     }
 }
