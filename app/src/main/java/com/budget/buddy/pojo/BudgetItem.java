@@ -12,6 +12,16 @@ public class BudgetItem {
     private double price;
 
     private String name;
+
+    public String getPersonName() {
+        return personName;
+    }
+
+    public void setPersonName(String personName) {
+        this.personName = personName;
+    }
+
+    private String personName;
     private String status;
     private String remarks;
 

@@ -58,10 +58,12 @@ public class BudgetItemAdapter extends BaseAdapter{
         holder.itemName=(TextView) rowView.findViewById(R.id.tvBudgetItemName);
         holder.itemPrice=(TextView) rowView.findViewById(R.id.tvBudgetItemPrice);
         holder.createDate=(TextView) rowView.findViewById(R.id.tvBudgetItemDate);
+        holder.personName=(TextView) rowView.findViewById(R.id.tvBudgetPersonName);
 
         holder.itemName.setText(budgetItems.get(position).getName());
-        holder.itemPrice.setText(String.valueOf(budgetItems.get(position).getPrice()));
+        holder.itemPrice.setText(String.valueOf((int)budgetItems.get(position).getPrice()));
         holder.createDate.setText(budgetItems.get(position).getCreatedAt());
+        holder.personName.setText(budgetItems.get(position).getPersonName());
 
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,5 +79,6 @@ public class BudgetItemAdapter extends BaseAdapter{
         public TextView itemName;
         public TextView itemPrice;
         public TextView createDate;
+        public TextView personName;
     }
 }

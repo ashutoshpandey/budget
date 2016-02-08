@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.Menu;
@@ -29,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import buddy.budget.com.budgetbuddy.R;
@@ -41,6 +43,8 @@ public class SingleBudgetActivity extends Activity {
     private TextView tvBudgetItems;
 
     private ListView listView;
+
+    private Budget budget;
 
     private BudgetItemAdapter adapter;
     private ArrayList<BudgetItem> budgetItems = new ArrayList<>();
@@ -192,12 +196,12 @@ public class SingleBudgetActivity extends Activity {
 
     private void initializeData() {
 
-        Budget budget = Utility.budgets.get(Utility.currentBudgetId);
+        budget = Utility.budgets.get(Utility.currentBudgetId);
 
         if(budget!=null){
 
             tvBudgetName.setText(budget.getName());
-            tvBudgetAmount.setText(String.valueOf(budget.getMaxAmount()));
+            tvBudgetAmount.setText(String.valueOf((int)budget.getMaxAmount()));
 
             loadBudgetItems();
         }
@@ -231,7 +235,19 @@ public class SingleBudgetActivity extends Activity {
                             budgetItem.setId(budgetJSON.getInt("id"));
                             budgetItem.setName(budgetJSON.getString("name"));
                             budgetItem.setPrice(budgetJSON.getDouble("price"));
-                            budgetItem.setCreatedAt(budgetJSON.getString("entry_date"));
+
+                            String createDate;
+                            try {
+                                createDate = new SimpleDateFormat("dd/mm/yyyy").format(new SimpleDateFormat("yyyy-mm-dd").parse(budgetJSON.getString("entry_date")));
+                            }
+                            catch(Exception ex){
+                                createDate = budgetJSON.getString("entry_date");
+                            }
+                            budgetItem.setCreatedAt(createDate);
+
+                            JSONObject customerJSON = budgetJSON.getJSONObject("customer");
+
+                            budgetItem.setPersonName(customerJSON.getString("name"));
 
                             currentAmount += budgetJSON.getDouble("price");
 
@@ -243,11 +259,18 @@ public class SingleBudgetActivity extends Activity {
                             listView.setVisibility(View.GONE);
                         }
                         else {
-                            tvBudgetItems.setVisibility(View.GONE);
+                            tvBudgetItems.setVisibility(View.VISIBLE);
                             listView.setVisibility(View.VISIBLE);
                         }
 
-                        tvCurrentAmount.setText(String.valueOf(currentAmount));
+                        tvCurrentAmount.setText(String.valueOf((int)currentAmount));
+
+                        int maxAmount = (int)budget.getMaxAmount();
+
+                        if(currentAmount <= maxAmount)
+                            tvCurrentAmount.setTextColor(Color.rgb(0,200,0));
+                        else
+                            tvCurrentAmount.setTextColor(Color.RED);
 
                     } else if (obj.getString("message").equals("empty")) {
                         tvBudgetItems.setVisibility(View.GONE);
