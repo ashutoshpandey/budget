@@ -32,6 +32,27 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Duration"
+                    android:id="@+id/tvLabelBudgetDuration"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:id="@+id/tvBudgetDurationValue"
+                    android:layout_weight="1" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="Budget Amount"
                     android:id="@+id/tvLabelBudgetAmount"
                     android:layout_weight="1" />
@@ -79,7 +100,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/listView"
-            android:layout_marginTop="20dp"
             android:paddingLeft="0dp"
             android:paddingRight="0dp"
             android:layout_marginLeft="0dp"

@@ -135,12 +135,11 @@ public class SplashActivity extends Activity {
                     JSONObject obj = new JSONObject(response);
                     if (obj.getString("message").equals("found")) {
 
-                        JSONArray customerArray = obj.getJSONArray("customer");
-                        JSONObject customer = customerArray.getJSONObject(0);
+                        JSONObject customer = obj.getJSONObject("customer");
 
                         String id = customer.getString("id");
                         String name = customer.getString("name");
-                        String phone = customer.getString("photo");
+                        String phone = customer.getString("phone");
                         String photo = customer.getString("photo");
                         String status = customer.getString("status");
                         String createdAt = customer.getString("created_at");

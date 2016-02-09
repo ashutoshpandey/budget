@@ -2,6 +2,7 @@ package com.budget.buddy.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +10,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.budget.buddy.MainActivity;
+import com.budget.buddy.SingleBudgetActivity;
 import com.budget.buddy.data.Utility;
+import com.budget.buddy.pojo.Budget;
 import com.budget.buddy.pojo.BudgetItem;
 
 import java.util.ArrayList;
@@ -19,21 +23,21 @@ import buddy.budget.com.budgetbuddy.R;
 /**
  * Created by Ashutosh on 2/1/2016.
  */
-public class BudgetItemAdapter extends BaseAdapter{
+public class BudgetAdapter extends BaseAdapter{
 
     private Activity activity;
-    private ArrayList<BudgetItem> budgetItems;
+    private ArrayList<Budget> budgets;
     private static LayoutInflater inflater=null;
     public Resources res;
 
-    public BudgetItemAdapter(Activity activity, ArrayList<BudgetItem> budgetItems){
+    public BudgetAdapter(Activity activity, ArrayList<Budget> budgets){
         this.activity = activity;
-        this.budgetItems = budgetItems;
+        this.budgets = budgets;
     }
 
     @Override
     public int getCount() {
-        return budgetItems.size();
+        return budgets.size();
     }
 
     @Override
@@ -54,32 +58,33 @@ public class BudgetItemAdapter extends BaseAdapter{
 
         ViewHolder holder=new ViewHolder();
         View rowView;
-        rowView = inflater.inflate(R.layout.budget_item, null);
+        rowView = inflater.inflate(R.layout.budget_list, null);
 
-        holder.itemName=(TextView) rowView.findViewById(R.id.tvBudgetItemName);
-        holder.itemPriceDate=(TextView) rowView.findViewById(R.id.tvBudgetItemPriceDate);
-        holder.personName=(TextView) rowView.findViewById(R.id.tvBudgetPersonName);
+        holder.name=(TextView) rowView.findViewById(R.id.tvBudgetListName);
+        holder.type=(TextView) rowView.findViewById(R.id.tvBudgetListType);
 
-        String name = budgetItems.get(position).getName().toLowerCase();
+        Budget budget = budgets.get(position);
+
+        String name = budget.getName().toLowerCase();
         name = name.substring(0, 1).toUpperCase() + name.substring(1);
 
-        holder.itemName.setText(name);
-        holder.itemPriceDate.setText(Utility.currency + " " + String.valueOf((int)budgetItems.get(position).getPrice()) + " / " + budgetItems.get(position).getCreatedAt());
-        holder.personName.setText("By: " + budgetItems.get(position).getPersonName());
+        holder.name.setText(name);
+        holder.type.setText("Type: " + budget.getBudgetType());
+
+        rowView.setTag(budget.getId());
 
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Utility.currentBudgetId = Integer.parseInt(v.getTag().toString());
+                ((MainActivity) activity).openSingleBudget();
             }
         });
         return rowView;
     }
 
     public static class ViewHolder{
-
-        public TextView itemName;
-        public TextView itemPriceDate;
-        public TextView personName;
+        public TextView name;
+        public TextView type;
     }
 }

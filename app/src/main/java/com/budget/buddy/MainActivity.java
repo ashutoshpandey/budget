@@ -95,6 +95,10 @@ public class MainActivity extends Activity {
                 createBudget();
                 break;
 
+            case R.id.menu_profile:
+                profile();
+                break;
+
             case R.id.menu_logout:
                 logout();
                 break;
@@ -107,6 +111,11 @@ public class MainActivity extends Activity {
 
     private void createBudget() {
         Intent i = new Intent(MainActivity.this, NewBudgetActivity.class);
+        startActivity(i);
+    }
+
+    private void profile() {
+        Intent i = new Intent(MainActivity.this, ProfileActivity.class);
         startActivity(i);
     }
 
@@ -206,6 +215,7 @@ public class MainActivity extends Activity {
                             budget.setId(budgetJSON.getInt("id"));
                             budget.setName(budgetJSON.getString("name"));
                             budget.setMaxAmount(budgetJSON.getDouble("max_amount"));
+                            budget.setBudgetType(budgetJSON.getString("budget_type").toUpperCase());
 
                             budgets.put(budget.getId(), budget);
                         }
@@ -246,5 +256,10 @@ public class MainActivity extends Activity {
     public void setBudgetCount() {
         System.out.println("Calling fragment dashboard");
         ((FragmentDashboard)fragmentDashboard).setBudgetCount();
+    }
+
+    public void openSingleBudget() {
+        Intent i = new Intent(MainActivity.this, SingleBudgetActivity.class);
+        startActivity(i);
     }
 }

@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.budget.buddy.MainActivity;
 import com.budget.buddy.SingleBudgetActivity;
+import com.budget.buddy.adapter.BudgetAdapter;
 import com.budget.buddy.pojo.Budget;
 import com.budget.buddy.data.Utility;
 import com.loopj.android.http.AsyncHttpClient;
@@ -45,12 +46,13 @@ public class FragmentBudget extends Fragment{
 
         listView = (ListView) rootView.findViewById(R.id.listViewBudgets);
 
-        ArrayList<String> budgetNames = new ArrayList<String>();
+        ArrayList<Budget> budgets = new ArrayList<>();
         for(Map.Entry<Integer, Budget> entry : Utility.budgets.entrySet())
-            budgetNames.add(entry.getValue().getName());
+            budgets.add(entry.getValue());
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_list_item_1, budgetNames);
+        BudgetAdapter adapter = new BudgetAdapter(getActivity(), budgets);
+//        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+//                android.R.layout.simple_list_item_1, budgetNames);
 
 
         // Assign adapter to ListView

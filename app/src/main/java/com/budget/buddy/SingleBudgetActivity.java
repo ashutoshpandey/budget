@@ -40,6 +40,7 @@ public class SingleBudgetActivity extends Activity {
     private TextView tvBudgetAmount;
     private TextView tvCurrentAmount;
     private TextView tvBudgetName;
+    private TextView tvBudgetDurationValue;
     private TextView tvBudgetItems;
 
     private ListView listView;
@@ -58,11 +59,11 @@ public class SingleBudgetActivity extends Activity {
         tvCurrentAmount = (TextView)findViewById(R.id.tvCurrentAmount);
         tvBudgetName = (TextView)findViewById(R.id.tvBudgetName);
         tvBudgetItems = (TextView)findViewById(R.id.tvBudgetItems);
+        tvBudgetDurationValue = (TextView)findViewById(R.id.tvBudgetDurationValue);
 
         listView = (ListView)findViewById(R.id.listView);
 
         adapter = new BudgetItemAdapter(this, budgetItems);
-
 
         // Assign adapter to ListView
         listView.setAdapter(adapter);
@@ -201,7 +202,8 @@ public class SingleBudgetActivity extends Activity {
         if(budget!=null){
 
             tvBudgetName.setText(budget.getName());
-            tvBudgetAmount.setText(String.valueOf((int)budget.getMaxAmount()));
+            tvBudgetAmount.setText(Utility.currency + " " + String.valueOf((int)budget.getMaxAmount()));
+            tvBudgetDurationValue.setText(budget.getDuration());
 
             loadBudgetItems();
         }
@@ -218,7 +220,6 @@ public class SingleBudgetActivity extends Activity {
             // When the response returned by REST has Http response code '200'
             @Override
             public void onSuccess(String response) {
-
                 try {
                     JSONObject obj = new JSONObject(response);
                     if (obj.getString("message").equals("found")) {
@@ -238,7 +239,7 @@ public class SingleBudgetActivity extends Activity {
 
                             String createDate;
                             try {
-                                createDate = new SimpleDateFormat("dd/mm/yyyy").format(new SimpleDateFormat("yyyy-mm-dd").parse(budgetJSON.getString("entry_date")));
+                                createDate = new SimpleDateFormat("dd MMM yyyy").format(new SimpleDateFormat("yyyy-mm-dd").parse(budgetJSON.getString("entry_date")));
                             }
                             catch(Exception ex){
                                 createDate = budgetJSON.getString("entry_date");
@@ -254,6 +255,8 @@ public class SingleBudgetActivity extends Activity {
                             budgetItems.add(budgetItem);
                         }
 
+                        adapter.notifyDataSetChanged();
+
                         if(budgetItems.isEmpty()){
                             tvBudgetItems.setVisibility(View.GONE);
                             listView.setVisibility(View.GONE);
@@ -263,7 +266,7 @@ public class SingleBudgetActivity extends Activity {
                             listView.setVisibility(View.VISIBLE);
                         }
 
-                        tvCurrentAmount.setText(String.valueOf((int)currentAmount));
+                        tvCurrentAmount.setText(Utility.currency + " " + String.valueOf((int)currentAmount));
 
                         int maxAmount = (int)budget.getMaxAmount();
 

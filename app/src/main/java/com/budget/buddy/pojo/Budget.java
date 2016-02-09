@@ -9,6 +9,24 @@ public class Budget {
     private int customerId;
     private double maxAmount;
     private String name;
+    private String budgetType;
+    private String duration;
+
+    public String getBudgetType() {
+        return budgetType;
+    }
+
+    public void setBudgetType(String budgetType) {
+        this.budgetType = budgetType;
+    }
+
+    public String getDuration() {
+        return duration;
+    }
+
+    public void setDuration(String duration) {
+        this.duration = duration;
+    }
 
     public double getMaxAmount() {
         return maxAmount;

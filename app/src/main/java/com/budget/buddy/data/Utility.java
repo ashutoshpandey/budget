@@ -19,7 +19,10 @@ public class Utility {
     public static String customerId;
     public static Customer customer;
 
-    public static String server = "http://10.0.2.2/budget/public";
+    public static String currency = "Rs.";
+
+    //public static String server = "http://10.0.2.2/budget/public";
+    public static String server = "http://54.169.114.127/laravel/public/index.php/";
 
     public static int currentBudgetId;
 
