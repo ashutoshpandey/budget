@@ -4,7 +4,7 @@ import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 
-import buddy.budget.com.budgetbuddy.R;
+import com.budget.buddy.R;
 
 /**
  * Created by Ashutosh on 1/30/2016.

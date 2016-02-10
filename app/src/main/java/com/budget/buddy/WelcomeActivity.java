@@ -25,7 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
-import buddy.budget.com.budgetbuddy.R;
+import com.budget.buddy.R;
 
 public class WelcomeActivity extends Activity {
 

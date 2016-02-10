@@ -27,7 +27,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import buddy.budget.com.budgetbuddy.R;
+import com.budget.buddy.R;
 
 
 public class SplashActivity extends Activity {

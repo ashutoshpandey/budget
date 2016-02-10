@@ -33,7 +33,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import buddy.budget.com.budgetbuddy.R;
+import com.budget.buddy.R;
 
 public class SingleBudgetActivity extends Activity {
 
@@ -42,6 +42,7 @@ public class SingleBudgetActivity extends Activity {
     private TextView tvBudgetName;
     private TextView tvBudgetDurationValue;
     private TextView tvBudgetItems;
+    private TextView tvBudgetHistory;
 
     private ListView listView;
 
@@ -60,6 +61,7 @@ public class SingleBudgetActivity extends Activity {
         tvBudgetName = (TextView)findViewById(R.id.tvBudgetName);
         tvBudgetItems = (TextView)findViewById(R.id.tvBudgetItems);
         tvBudgetDurationValue = (TextView)findViewById(R.id.tvBudgetDurationValue);
+        tvBudgetHistory = (TextView)findViewById(R.id.tvBudgetHistory);
 
         listView = (ListView)findViewById(R.id.listView);
 
@@ -67,6 +69,14 @@ public class SingleBudgetActivity extends Activity {
 
         // Assign adapter to ListView
         listView.setAdapter(adapter);
+
+        tvBudgetHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), BudgetHistoryActivity.class);
+                startActivity(i);
+            }
+        });
     }
 
     @Override

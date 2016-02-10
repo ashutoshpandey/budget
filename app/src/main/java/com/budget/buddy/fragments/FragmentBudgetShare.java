@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.budget.buddy.MainActivity;
 import com.budget.buddy.SingleBudgetActivity;
 import com.budget.buddy.pojo.Budget;
 import com.budget.buddy.pojo.BudgetShare;
@@ -17,8 +18,9 @@ import com.budget.buddy.data.Utility;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Set;
 
-import buddy.budget.com.budgetbuddy.R;
+import com.budget.buddy.R;
 
 /**
  * Created by Ashutosh on 1/30/2016.
@@ -45,6 +47,7 @@ public class FragmentBudgetShare extends Fragment{
         // Assign adapter to ListView
         listView.setAdapter(adapter);
 
+
         // ListView Item Click Listener
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -53,14 +56,23 @@ public class FragmentBudgetShare extends Fragment{
                                     int position, long id) {
 
                 // ListView Clicked item index
-                int itemPosition     = position;
+                int itemPosition = position;
 
                 // ListView Clicked item value
-                //String  itemValue    = (String) listView.getItemAtPosition(position);
+                Set<Map.Entry<Integer, Budget>> entries = Utility.budgets.entrySet();
 
-                Intent i = new Intent(getActivity(), SingleBudgetActivity.class);
-                startActivity(i);
+                int i = -1;
+                for(Map.Entry<Integer,Budget> entry : entries){
+                    ++i;
 
+                    if(i==itemPosition) {
+                        Utility.currentBudgetId = entry.getKey();
+                        break;
+                    }
+                }
+
+                Intent in = new Intent(getActivity(), SingleBudgetActivity.class);
+                startActivity(in);
             }
 
         });

@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.budget.buddy.data.Utility;
+import com.budget.buddy.R;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -22,8 +23,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Calendar;
-
-import buddy.budget.com.budgetbuddy.R;
 
 public class AddBudgetItemActivity extends Activity {
 

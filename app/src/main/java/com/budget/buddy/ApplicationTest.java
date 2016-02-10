@@ -1,4 +1,4 @@
-package buddy.budget.com.budgetbuddy;
+package com.budget.buddy;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

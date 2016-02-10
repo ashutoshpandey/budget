@@ -24,9 +24,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 
-import buddy.budget.com.budgetbuddy.R;
+import com.budget.buddy.R;
 
 public class MainActivity extends Activity {
 
@@ -155,6 +157,9 @@ public class MainActivity extends Activity {
                         }
 
                         Utility.budgetShares = budgetShares;
+
+                        setShareCount();
+
                     } else {
                         Toast.makeText(getApplicationContext(), "Invalid data", Toast.LENGTH_LONG).show();
                     }
@@ -212,10 +217,30 @@ public class MainActivity extends Activity {
 
                             Budget budget = new Budget();
 
+                            String budgetType = budgetJSON.getString("budget_type").toUpperCase();
+                            String duration = "N/A";
+
+                            if(budgetType.equals("MONTHLY")) {
+                                Calendar cal = Calendar.getInstance();
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("MMM");
+                                String month = dateFormat.format(cal.getTime());
+                                int year = cal.get(Calendar.YEAR);
+
+                                duration = month + "-" + year;
+                                budget.setDuration(duration);
+                            }
+                            else {
+                                String startDate = budgetJSON.getString("start_date");
+                                String endDate = budgetJSON.getString("end_date");
+
+                                duration = startDate + " - " + endDate;
+                                budget.setDuration(duration);
+                            }
+
                             budget.setId(budgetJSON.getInt("id"));
                             budget.setName(budgetJSON.getString("name"));
                             budget.setMaxAmount(budgetJSON.getDouble("max_amount"));
-                            budget.setBudgetType(budgetJSON.getString("budget_type").toUpperCase());
+                            budget.setBudgetType(budgetType);
 
                             budgets.put(budget.getId(), budget);
                         }
@@ -254,12 +279,21 @@ public class MainActivity extends Activity {
     }
 
     public void setBudgetCount() {
-        System.out.println("Calling fragment dashboard");
         ((FragmentDashboard)fragmentDashboard).setBudgetCount();
+    }
+
+    public void setShareCount() {
+        ((FragmentDashboard)fragmentDashboard).setBudgetShareCount();
     }
 
     public void openSingleBudget() {
         Intent i = new Intent(MainActivity.this, SingleBudgetActivity.class);
+        startActivity(i);
+    }
+
+    public void openHistory(String yearMonth) {
+        Intent i = new Intent(MainActivity.this, BudgetHistoryDetailsActivity.class);
+        i.putExtra("yearMonth", yearMonth);
         startActivity(i);
     }
 }

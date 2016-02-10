@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import buddy.budget.com.budgetbuddy.R;
+import com.budget.buddy.R;
 
 /**
  * Created by Ashutosh on 1/30/2016.
@@ -87,10 +87,5 @@ public class FragmentBudget extends Fragment{
 
         });
         return rootView;
-    }
-
-    private void setBudgetCount() {
-        System.out.println("Calling main activity method");
-        ((MainActivity)getActivity()).setBudgetCount();
     }
 }

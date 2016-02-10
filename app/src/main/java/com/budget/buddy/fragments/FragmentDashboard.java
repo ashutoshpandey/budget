@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.budget.buddy.data.Utility;
 
-import buddy.budget.com.budgetbuddy.R;
+import com.budget.buddy.R;
 
 /**
  * Created by Ashutosh on 1/30/2016.
@@ -31,7 +31,10 @@ public class FragmentDashboard extends Fragment{
     }
 
     public void setBudgetCount(){
-        System.out.println("Setting label in dashboard");
         tvTotalBudgets.setText(String.valueOf(Utility.budgets.size()));
+    }
+
+    public void setBudgetShareCount(){
+        tvTotalSharings.setText(String.valueOf(Utility.budgetShares.size()));
     }
 }

@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import buddy.budget.com.budgetbuddy.R;
+import com.budget.buddy.R;
 
 public class SharesActivity extends Activity {
 

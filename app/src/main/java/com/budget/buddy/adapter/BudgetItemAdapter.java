@@ -14,7 +14,7 @@ import com.budget.buddy.pojo.BudgetItem;
 
 import java.util.ArrayList;
 
-import buddy.budget.com.budgetbuddy.R;
+import com.budget.buddy.R;
 
 /**
  * Created by Ashutosh on 2/1/2016.

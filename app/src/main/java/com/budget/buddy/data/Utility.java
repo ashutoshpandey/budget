@@ -4,6 +4,7 @@ import com.budget.buddy.pojo.Budget;
 import com.budget.buddy.pojo.BudgetShare;
 import com.budget.buddy.pojo.Customer;
 
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,5 +54,15 @@ public class Utility {
             return projectProperties.getProperty(key);
         else
             return null;
+    }
+
+    public static String getMonthName(int month) {
+        String monthName = null;
+        DateFormatSymbols dfs = new DateFormatSymbols();
+        String[] months = dfs.getMonths();
+        if (month >= 0 && month <= 11 ) {
+            monthName = months[month];
+        }
+        return monthName;
     }
 }

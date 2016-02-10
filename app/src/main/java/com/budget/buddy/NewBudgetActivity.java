@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-import buddy.budget.com.budgetbuddy.R;
+import com.budget.buddy.R;
 
 public class NewBudgetActivity extends Activity {
 

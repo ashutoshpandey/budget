@@ -2,7 +2,6 @@ package com.budget.buddy.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,10 +10,9 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.budget.buddy.MainActivity;
-import com.budget.buddy.SingleBudgetActivity;
 import com.budget.buddy.data.Utility;
 import com.budget.buddy.pojo.Budget;
-import com.budget.buddy.pojo.BudgetItem;
+import com.budget.buddy.pojo.BudgetHistory;
 
 import java.util.ArrayList;
 
@@ -23,14 +21,14 @@ import com.budget.buddy.R;
 /**
  * Created by Ashutosh on 2/1/2016.
  */
-public class BudgetAdapter extends BaseAdapter{
+public class BudgetHistoryAdapter extends BaseAdapter{
 
     private Activity activity;
-    private ArrayList<Budget> budgets;
+    private ArrayList<BudgetHistory> budgets;
     private static LayoutInflater inflater=null;
     public Resources res;
 
-    public BudgetAdapter(Activity activity, ArrayList<Budget> budgets){
+    public BudgetHistoryAdapter(Activity activity, ArrayList<BudgetHistory> budgets){
         this.activity = activity;
         this.budgets = budgets;
     }
@@ -58,33 +56,28 @@ public class BudgetAdapter extends BaseAdapter{
 
         ViewHolder holder=new ViewHolder();
         View rowView;
-        rowView = inflater.inflate(R.layout.budget_list, null);
+        rowView = inflater.inflate(R.layout.budget_history, null);
 
-        holder.name=(TextView) rowView.findViewById(R.id.tvBudgetListName);
-        holder.type=(TextView) rowView.findViewById(R.id.tvBudgetListType);
+        holder.text=(TextView) rowView.findViewById(R.id.tvBudgetListName);
+        holder.amount=(TextView) rowView.findViewById(R.id.tvBudgetListAmount);
 
-        Budget budget = budgets.get(position);
+        holder.text.setText(budgets.get(position).getText());
+        holder.amount.setText(Utility.currency + " " + budgets.get(position).getAmount());
 
-        String name = budget.getName().toLowerCase();
-        name = name.substring(0, 1).toUpperCase() + name.substring(1);
-
-        holder.name.setText(name);
-        holder.type.setText("Type: " + budget.getBudgetType());
-
-        rowView.setTag(budget.getId());
+        rowView.setTag(budgets.get(position).getYearMonth());
 
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utility.currentBudgetId = Integer.parseInt(v.getTag().toString());
-                ((MainActivity) activity).openSingleBudget();
+                String yearMonth = v.getTag().toString();
+                ((MainActivity) activity).openHistory(yearMonth);
             }
         });
         return rowView;
     }
 
     public static class ViewHolder{
-        public TextView name;
-        public TextView type;
+        public TextView text;
+        public TextView amount;
     }
 }

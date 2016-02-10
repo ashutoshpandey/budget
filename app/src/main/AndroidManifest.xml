@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="buddy.budget.com.budgetbuddy" >
+    package="com.budget.buddy" >
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -56,7 +56,7 @@
         <activity
             android:name="com.budget.buddy.SingleBudgetActivity"
             android:label="@string/title_activity_single_budget"
-            android:parentActivityName="com.budget.buddy.MainActivity">
+            android:parentActivityName="com.budget.buddy.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.budget.buddy.MainActivity" />
@@ -64,7 +64,7 @@
         <activity
             android:name="com.budget.buddy.EditBudgetActivity"
             android:label="@string/title_activity_single_budget"
-            android:parentActivityName="com.budget.buddy.SingleBudgetActivity">
+            android:parentActivityName="com.budget.buddy.SingleBudgetActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.budget.buddy.MainActivity" />
@@ -84,6 +84,22 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.budget.buddy.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.budget.buddy.BudgetHistoryActivity"
+            android:label="@string/title_activity_budget_history"
+            android:parentActivityName="com.budget.buddy.SingleBudgetActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.budget.buddy.SingleBudgetActivity" />
+        </activity>
+        <activity
+            android:name="com.budget.buddy.BudgetHistoryDetailsActivity"
+            android:label="@string/title_activity_budget_history_details"
+            android:parentActivityName="com.budget.buddy.BudgetHistoryActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.budget.buddy.BudgetHistoryActivity" />
         </activity>
     </application>
 

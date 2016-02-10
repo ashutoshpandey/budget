@@ -7,18 +7,18 @@ import android.view.MenuItem;
 
 import com.budget.buddy.R;
 
-public class ShareBudgetActivity extends Activity {
+public class BudgetHistoryDetailsActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_share_budget);
+        setContentView(R.layout.activity_budget_history_details);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_share_budget, menu);
+        getMenuInflater().inflate(R.menu.menu_budget_history_details, menu);
         return true;
     }
 

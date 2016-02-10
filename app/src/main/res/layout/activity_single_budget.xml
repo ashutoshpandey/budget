@@ -13,15 +13,29 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/tvBudgetName" />
-
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:id="@+id/tvBudgetName"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:id="@+id/tvBudgetHistory"
+                    android:text="History" />
+
+            </TableRow>
 
             <TableRow
                 android:layout_width="match_parent"

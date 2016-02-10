@@ -15,4 +15,6 @@
     <string name="title_activity_single_budget">Budget info</string>
     <string name="title_activity_share_budget">Share this budget</string>
     <string name="title_activity_profile">ProfileActivity</string>
+    <string name="title_activity_budget_history">Budget History</string>
+    <string name="title_activity_budget_history_details">Budget History</string>
 </resources>
