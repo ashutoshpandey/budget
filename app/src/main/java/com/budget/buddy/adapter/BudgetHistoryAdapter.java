@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.budget.buddy.BudgetHistoryActivity;
 import com.budget.buddy.MainActivity;
 import com.budget.buddy.data.Utility;
 import com.budget.buddy.pojo.Budget;
@@ -70,7 +71,7 @@ public class BudgetHistoryAdapter extends BaseAdapter{
             @Override
             public void onClick(View v) {
                 String yearMonth = v.getTag().toString();
-                ((MainActivity) activity).openHistory(yearMonth);
+                ((BudgetHistoryActivity) activity).openHistory(yearMonth);
             }
         });
         return rowView;

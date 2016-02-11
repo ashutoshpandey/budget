@@ -1,6 +1,7 @@
 package com.budget.buddy;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
@@ -29,8 +30,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Map;
 
 import com.budget.buddy.R;
 
@@ -134,33 +137,53 @@ public class BudgetHistoryActivity extends Activity {
 
         budgetHistories.clear();
 
-        HashSet<String> yearMonths = new HashSet<>();
+        if(budget.getBudgetType().toUpperCase().equals("MONTHLY")) {
 
-        for(BudgetItem item : budgetItems){
+            //HashSet<String> yearMonths = new HashSet<>();
+            HashMap<String, Double> yearMonthAmount = new HashMap<String, Double>();
 
-            String entryDate = item.getCreatedAt();
+            for (BudgetItem item : budgetItems) {
 
-            DateFormat format = new SimpleDateFormat("yyyy-mm-dd", Locale.ENGLISH);
-            Date date = null;
-            try {
-                date = format.parse(entryDate);
-            } catch (ParseException e) {
-                e.printStackTrace();
+                String entryDate = item.getCreatedAt();
+
+                DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                Date date = null;
+                try {
+                    date = format.parse(entryDate);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                if (date != null) {
+
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(date);
+
+                    int month = cal.get(Calendar.MONTH);
+                    int year = cal.get(Calendar.YEAR);
+
+                    String yearMonth = year + "," + month;
+
+                    if(yearMonthAmount.containsKey(yearMonth)) {
+                        yearMonthAmount.put(yearMonth, yearMonthAmount.get(yearMonth) + item.getPrice());
+                        continue;
+                    }
+
+                    yearMonthAmount.put(yearMonth, item.getPrice());          // put year month combination in hashset to check duplicacy
+                }
             }
 
-            if(date!=null) {
+            for(Map.Entry<String, Double> entry : yearMonthAmount.entrySet()){
 
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(date);
+                String yearMonth = entry.getKey();
+                double amount = entry.getValue();
 
-                int month = cal.get(Calendar.MONTH);
-                int year = cal.get(Calendar.YEAR);
+                int month = Integer.parseInt(yearMonth.split(",")[1]);
+                int year = Integer.parseInt(yearMonth.split(",")[0]);
+
+                String text = Utility.getMonthName(month) + "-" + year;
 
                 BudgetHistory history = new BudgetHistory();
-
-                String yearMonth = year + "," + month;
-                String text = Utility.getMonthName(month) + "-" + year;
-                double amount = 0;
 
                 history.setText(text);
                 history.setYearMonth(yearMonth);
@@ -169,7 +192,37 @@ public class BudgetHistoryActivity extends Activity {
                 budgetHistories.add(history);
             }
         }
+        else{
+            for (BudgetItem item : budgetItems) {
+
+                String entryDate = item.getCreatedAt();
+
+                DateFormat format = new SimpleDateFormat("yyyy-mm-dd", Locale.ENGLISH);
+                Date date = null;
+                try {
+                    date = format.parse(entryDate);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                if (date != null) {
+
+                    BudgetHistory history = new BudgetHistory();
+
+                    history.setText(item.getName());
+                    history.setAmount(item.getPrice());
+
+                    budgetHistories.add(history);
+                }
+            }
+        }
 
         adapter.notifyDataSetChanged();
+    }
+
+    public void openHistory(String yearMonth) {
+        Intent i = new Intent(BudgetHistoryActivity.this, BudgetHistoryDetailsActivity.class);
+        i.putExtra("yearMonth", yearMonth);
+        startActivity(i);
     }
 }

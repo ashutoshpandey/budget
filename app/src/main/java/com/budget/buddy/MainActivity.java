@@ -290,10 +290,4 @@ public class MainActivity extends Activity {
         Intent i = new Intent(MainActivity.this, SingleBudgetActivity.class);
         startActivity(i);
     }
-
-    public void openHistory(String yearMonth) {
-        Intent i = new Intent(MainActivity.this, BudgetHistoryDetailsActivity.class);
-        i.putExtra("yearMonth", yearMonth);
-        startActivity(i);
-    }
 }

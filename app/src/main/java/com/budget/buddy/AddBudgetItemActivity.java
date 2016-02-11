@@ -22,6 +22,7 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class AddBudgetItemActivity extends Activity {
@@ -81,13 +82,13 @@ public class AddBudgetItemActivity extends Activity {
 
         String name = etName.getText().toString();
         String price = etPrice.getText().toString();
-       // String date = etDate.getText().toString();
+        String date = etDate.getText().toString();
 
         params.put("budget_id", String.valueOf(Utility.currentBudgetId));
         params.put("customer_id", Utility.customer.getId());
         params.put("name", name);
         params.put("price", price);
-        //params.put("date", date);
+        params.put("date", date);
 
         AsyncHttpClient client = new AsyncHttpClient();
 

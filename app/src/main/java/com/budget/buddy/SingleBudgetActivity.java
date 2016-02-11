@@ -32,6 +32,7 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import com.budget.buddy.R;
 
@@ -221,15 +222,24 @@ public class SingleBudgetActivity extends Activity {
 
     private void loadBudgetItems() {
 
+        Calendar cal = Calendar.getInstance();
+
+        int month = cal.get(Calendar.MONTH);
+        int year = cal.get(Calendar.YEAR);
+
+        String yearMonth = year + "," + month;
+
         RequestParams params = new RequestParams();
         params.put("budget_id", String.valueOf(Utility.currentBudgetId));
+        params.put("yearMonth", yearMonth);
 
         AsyncHttpClient client = new AsyncHttpClient();
 
-        client.get(Utility.server + "/all-budget-items", params, new AsyncHttpResponseHandler() {
+        client.get(Utility.server + "/all-budget-items-filtered", params, new AsyncHttpResponseHandler() {
             // When the response returned by REST has Http response code '200'
             @Override
             public void onSuccess(String response) {
+                System.out.println(response);
                 try {
                     JSONObject obj = new JSONObject(response);
                     if (obj.getString("message").equals("found")) {
@@ -249,7 +259,7 @@ public class SingleBudgetActivity extends Activity {
 
                             String createDate;
                             try {
-                                createDate = new SimpleDateFormat("dd MMM yyyy").format(new SimpleDateFormat("yyyy-mm-dd").parse(budgetJSON.getString("entry_date")));
+                                createDate = new SimpleDateFormat("dd-MMM-yyyy").format(new SimpleDateFormat("yyyy-mm-dd").parse(budgetJSON.getString("entry_date")));
                             }
                             catch(Exception ex){
                                 createDate = budgetJSON.getString("entry_date");
@@ -288,6 +298,7 @@ public class SingleBudgetActivity extends Activity {
                     } else if (obj.getString("message").equals("empty")) {
                         tvBudgetItems.setVisibility(View.GONE);
                         listView.setVisibility(View.GONE);
+                        tvCurrentAmount.setText(Utility.currency + " 0");
                     } else {
                         Toast.makeText(getApplicationContext(), "Invalid data", Toast.LENGTH_LONG).show();
                     }

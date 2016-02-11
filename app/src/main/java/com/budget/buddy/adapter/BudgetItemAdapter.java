@@ -64,7 +64,7 @@ public class BudgetItemAdapter extends BaseAdapter{
         name = name.substring(0, 1).toUpperCase() + name.substring(1);
 
         holder.itemName.setText(name);
-        holder.itemPriceDate.setText(Utility.currency + " " + String.valueOf((int)budgetItems.get(position).getPrice()) + " / " + budgetItems.get(position).getCreatedAt());
+        holder.itemPriceDate.setText(Utility.currency + " " + String.valueOf((int)budgetItems.get(position).getPrice()) + " On " + budgetItems.get(position).getCreatedAt());
         holder.personName.setText("By: " + budgetItems.get(position).getPersonName());
 
         rowView.setOnClickListener(new View.OnClickListener() {
