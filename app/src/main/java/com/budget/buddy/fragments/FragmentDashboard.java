@@ -20,6 +20,14 @@ public class FragmentDashboard extends Fragment{
     private TextView tvTotalSharings;
 
     @Override
+    public void onResume(){
+        super.onResume();
+
+        setBudgetCount();
+        setBudgetShareCount();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.main_dashboard, container, false);
@@ -31,10 +39,17 @@ public class FragmentDashboard extends Fragment{
     }
 
     public void setBudgetCount(){
-        tvTotalBudgets.setText(String.valueOf(Utility.budgets.size()));
+
+        if(Utility.budgets.size()==0 || (Utility.budgets.containsKey(-1) && Utility.budgets.get(-1).getName().equals("no budgets")))
+            tvTotalBudgets.setText("0");
+        else
+            tvTotalBudgets.setText(String.valueOf(Utility.budgets.size()));
     }
 
     public void setBudgetShareCount(){
-        tvTotalSharings.setText(String.valueOf(Utility.budgetShares.size()));
+        if(Utility.budgetShares.size()==0 || (Utility.budgetShares.containsKey(-1) && Utility.budgetShares.get(-1).getName().equals("no shares")))
+            tvTotalSharings.setText("0");
+        else
+            tvTotalSharings.setText(String.valueOf(Utility.budgetShares.size()));
     }
 }

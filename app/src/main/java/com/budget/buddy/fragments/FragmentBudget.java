@@ -51,14 +51,9 @@ public class FragmentBudget extends Fragment{
             budgets.add(entry.getValue());
 
         BudgetAdapter adapter = new BudgetAdapter(getActivity(), budgets);
-//        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
-//                android.R.layout.simple_list_item_1, budgetNames);
 
-
-        // Assign adapter to ListView
         listView.setAdapter(adapter);
 
-        // ListView Item Click Listener
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override

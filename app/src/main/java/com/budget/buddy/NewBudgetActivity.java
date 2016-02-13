@@ -182,6 +182,7 @@ public class NewBudgetActivity extends Activity {
                         etBudgetName.setText("");
                         etStartDate.setText("");
                         etEndDate.setText("");
+                        etBudgetLimit.setText("");
                         rdGroupDate.check(R.id.rdBudgetTypeMonthly);
 
                     } else if (obj.getString("message").equals("duplicate")) {

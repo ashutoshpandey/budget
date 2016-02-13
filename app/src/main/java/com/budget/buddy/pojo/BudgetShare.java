@@ -8,7 +8,16 @@ public class BudgetShare {
     private int id;
     private int customerId;
 
+    private String budgetType;
     private String name;
+
+    public String getBudgetType() {
+        return budgetType;
+    }
+
+    public void setBudgetType(String budgetType) {
+        this.budgetType = budgetType;
+    }
 
     public int getId() {
         return id;

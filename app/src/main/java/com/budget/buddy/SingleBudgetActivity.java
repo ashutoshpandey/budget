@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,7 +44,7 @@ public class SingleBudgetActivity extends Activity {
     private TextView tvBudgetName;
     private TextView tvBudgetDurationValue;
     private TextView tvBudgetItems;
-    private TextView tvBudgetHistory;
+    private ImageButton imgHistory;
 
     private ListView listView;
 
@@ -62,7 +63,7 @@ public class SingleBudgetActivity extends Activity {
         tvBudgetName = (TextView)findViewById(R.id.tvBudgetName);
         tvBudgetItems = (TextView)findViewById(R.id.tvBudgetItems);
         tvBudgetDurationValue = (TextView)findViewById(R.id.tvBudgetDurationValue);
-        tvBudgetHistory = (TextView)findViewById(R.id.tvBudgetHistory);
+        imgHistory = (ImageButton)findViewById(R.id.imgHistory);
 
         listView = (ListView)findViewById(R.id.listView);
 
@@ -71,7 +72,7 @@ public class SingleBudgetActivity extends Activity {
         // Assign adapter to ListView
         listView.setAdapter(adapter);
 
-        tvBudgetHistory.setOnClickListener(new View.OnClickListener() {
+        imgHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), BudgetHistoryActivity.class);
@@ -153,30 +154,29 @@ public class SingleBudgetActivity extends Activity {
         RequestParams params = new RequestParams();
         params.put("to_customer_id", toCustomerId);
         params.put("from_customer_id", Utility.customer.getId());
+        params.put("budget_id", String.valueOf(Utility.currentBudgetId));
 
         AsyncHttpClient client = new AsyncHttpClient();
 
-        client.get(Utility.server + "/share-budget", params, new AsyncHttpResponseHandler() {
+        client.post(Utility.server + "/share-budget", params, new AsyncHttpResponseHandler() {
             // When the response returned by REST has Http response code '200'
             @Override
             public void onSuccess(String response) {
 
                 try {
                     JSONObject obj = new JSONObject(response);
-                    if (obj.getString("message").equals("found")) {
+                    if (obj.getString("message").equals("done")) {
                         Toast.makeText(getApplicationContext(), "You shared your budget with this person", Toast.LENGTH_LONG).show();
-                    }
-                    else if (obj.getString("message").equals("duplicate")) {
+                    } else if (obj.getString("message").equals("duplicate")) {
                         Toast.makeText(getApplicationContext(), "This budget is already shared", Toast.LENGTH_LONG).show();
-                    }
-                    else if (obj.getString("message").equals("invalid")) {
+                    } else if (obj.getString("message").equals("invalid")) {
                         Toast.makeText(getApplicationContext(), "Invalid customer id", Toast.LENGTH_LONG).show();
-                    }
-                    else {
+                    } else {
                         Toast.makeText(getApplicationContext(), "Invalid data", Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Cannot share at this moment", Toast.LENGTH_LONG).show();
+                    System.out.println("champa");
                     e.printStackTrace();
                 }
             }
@@ -239,7 +239,7 @@ public class SingleBudgetActivity extends Activity {
             // When the response returned by REST has Http response code '200'
             @Override
             public void onSuccess(String response) {
-                System.out.println(response);
+
                 try {
                     JSONObject obj = new JSONObject(response);
                     if (obj.getString("message").equals("found")) {
@@ -280,6 +280,7 @@ public class SingleBudgetActivity extends Activity {
                         if(budgetItems.isEmpty()){
                             tvBudgetItems.setVisibility(View.GONE);
                             listView.setVisibility(View.GONE);
+                            imgHistory.setVisibility(View.GONE);
                         }
                         else {
                             tvBudgetItems.setVisibility(View.VISIBLE);
@@ -298,6 +299,7 @@ public class SingleBudgetActivity extends Activity {
                     } else if (obj.getString("message").equals("empty")) {
                         tvBudgetItems.setVisibility(View.GONE);
                         listView.setVisibility(View.GONE);
+                        imgHistory.setVisibility(View.GONE);
                         tvCurrentAmount.setText(Utility.currency + " 0");
                     } else {
                         Toast.makeText(getApplicationContext(), "Invalid data", Toast.LENGTH_LONG).show();

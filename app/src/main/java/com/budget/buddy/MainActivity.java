@@ -124,7 +124,7 @@ public class MainActivity extends Activity {
     private void logout(){
         finish();
     }
-
+/*
     private void loadCustomerBudgetSharesFromServer() {
 
         RequestParams params = new RequestParams();
@@ -137,13 +137,13 @@ public class MainActivity extends Activity {
             @Override
             public void onSuccess(String response) {
 
+                HashMap<Integer, BudgetShare> budgetShares = new HashMap<Integer, BudgetShare>();
+
                 try {
                     JSONObject obj = new JSONObject(response);
                     if (obj.getString("message").equals("found")) {
 
                         JSONArray budgetSharesArray = obj.getJSONArray("budgetShares");
-
-                        HashMap<Integer, BudgetShare> budgetShares = new HashMap<Integer, BudgetShare>();
 
                         for (int i = 0; i < budgetSharesArray.length(); i++) {
                             JSONObject budgetJSON = budgetSharesArray.getJSONObject(i);
@@ -160,6 +160,17 @@ public class MainActivity extends Activity {
 
                         setShareCount();
 
+                    } else if (obj.getString("message").equals("empty")) {
+                        BudgetShare budgetShare = new BudgetShare();
+
+                        budgetShare.setId(-1);
+                        budgetShare.setName("no shares");
+
+                        budgetShares.put(budgetShare.getId(), budgetShare);
+
+                        Utility.budgetShares = budgetShares;
+
+                        setShareCount();
                     } else {
                         Toast.makeText(getApplicationContext(), "Invalid data", Toast.LENGTH_LONG).show();
                     }
@@ -188,7 +199,15 @@ public class MainActivity extends Activity {
             }
         });
     }
+*/
+    private void loadCustomerBudgetSharesFromServer() {
+        Utility.loadShares(MainActivity.this);
+    }
 
+    private void loadCustomerBudgetsFromServer() {
+        Utility.loadBudgets(MainActivity.this);
+    }
+/*
     private void loadCustomerBudgetsFromServer() {
 
         if(Utility.customer==null)
@@ -204,13 +223,13 @@ public class MainActivity extends Activity {
             @Override
             public void onSuccess(String response) {
 
+                HashMap<Integer, Budget> budgets = new HashMap<Integer, Budget>();
                 try {
                     JSONObject obj = new JSONObject(response);
+
                     if (obj.getString("message").equals("found")) {
 
                         JSONArray budgetsArray = obj.getJSONArray("budgets");
-
-                        HashMap<Integer, Budget> budgets = new HashMap<Integer, Budget>();
 
                         for (int i = 0; i < budgetsArray.length(); i++) {
                             JSONObject budgetJSON = budgetsArray.getJSONObject(i);
@@ -249,7 +268,20 @@ public class MainActivity extends Activity {
 
                         setBudgetCount();
 
-                    } else {
+                    }
+                    else if(obj.getString("message").equals("empty")){
+                        Budget budget = new Budget();
+
+                        budget.setId(-1);
+                        budget.setName("no budgets");
+
+                        budgets.put(budget.getId(), budget);
+
+                        Utility.budgets = budgets;
+
+                        setBudgetCount();
+                    }
+                    else {
                         Toast.makeText(getApplicationContext(), "Invalid data", Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
@@ -277,7 +309,7 @@ public class MainActivity extends Activity {
             }
         });
     }
-
+*/
     public void setBudgetCount() {
         ((FragmentDashboard)fragmentDashboard).setBudgetCount();
     }
