@@ -13,7 +13,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.budget.buddy.SplashActivity"
+            android:name=".SplashActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,84 +22,92 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.budget.buddy.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/title_activity_main" >
         </activity>
         <activity
-            android:name="com.budget.buddy.NewBudgetActivity"
+            android:name=".NewBudgetActivity"
             android:label="@string/title_activity_new_budget"
-            android:parentActivityName="com.budget.buddy.MainActivity" >
+            android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.budget.buddy.MainActivity" />
         </activity>
         <activity
-            android:name="com.budget.buddy.SharesActivity"
+            android:name=".SharesActivity"
             android:label="@string/title_activity_new_budget"
-            android:parentActivityName="com.budget.buddy.MainActivity" >
+            android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.budget.buddy.MainActivity" />
         </activity>
         <activity
-            android:name="com.budget.buddy.WelcomeActivity"
+            android:name=".WelcomeActivity"
             android:label="@string/title_activity_welcome" >
         </activity>
         <activity
-            android:name="com.budget.buddy.AddBudgetItemActivity"
+            android:name=".AddBudgetItemActivity"
             android:label="@string/title_activity_add_budget_item"
-            android:parentActivityName="com.budget.buddy.SingleBudgetActivity" >
+            android:parentActivityName=".SingleBudgetActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.budget.buddy.SingleBudgetActivity" />
         </activity>
         <activity
-            android:name="com.budget.buddy.SingleBudgetActivity"
+            android:name=".SingleBudgetActivity"
             android:label="@string/title_activity_single_budget"
-            android:parentActivityName="com.budget.buddy.MainActivity" >
+            android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.budget.buddy.MainActivity" />
         </activity>
         <activity
-            android:name="com.budget.buddy.EditBudgetActivity"
+            android:name=".EditBudgetActivity"
             android:label="@string/title_activity_single_budget"
-            android:parentActivityName="com.budget.buddy.SingleBudgetActivity" >
+            android:parentActivityName=".SingleBudgetActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.budget.buddy.MainActivity" />
         </activity>
         <activity
-            android:name="com.budget.buddy.ShareBudgetActivity"
+            android:name=".ShareBudgetActivity"
             android:label="@string/title_activity_share_budget"
-            android:parentActivityName="com.budget.buddy.SingleBudgetActivity" >
+            android:parentActivityName=".SingleBudgetActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.budget.buddy.SingleBudgetActivity" />
         </activity>
         <activity
-            android:name="com.budget.buddy.ProfileActivity"
+            android:name=".ProfileActivity"
             android:label="@string/title_activity_profile"
-            android:parentActivityName="com.budget.buddy.MainActivity" >
+            android:parentActivityName=".MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.budget.buddy.MainActivity" />
         </activity>
         <activity
-            android:name="com.budget.buddy.BudgetHistoryActivity"
+            android:name=".BudgetHistoryActivity"
             android:label="@string/title_activity_budget_history"
-            android:parentActivityName="com.budget.buddy.SingleBudgetActivity" >
+            android:parentActivityName=".SingleBudgetActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.budget.buddy.SingleBudgetActivity" />
         </activity>
         <activity
-            android:name="com.budget.buddy.BudgetHistoryDetailsActivity"
+            android:name=".BudgetHistoryDetailsActivity"
             android:label="@string/title_activity_budget_history_details"
-            android:parentActivityName="com.budget.buddy.BudgetHistoryActivity" >
+            android:parentActivityName=".BudgetHistoryActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.budget.buddy.BudgetHistoryActivity" />
+        </activity>
+        <activity
+            android:name=".CategoryActivity"
+            android:label="@string/title_activity_category"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.budget.buddy.MainActivity" />
         </activity>
     </application>
 

@@ -1,14 +1,18 @@
 package com.budget.buddy.adapter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.budget.buddy.SingleBudgetActivity;
 import com.budget.buddy.data.Utility;
 import com.budget.buddy.pojo.BudgetItem;
 
@@ -67,12 +71,35 @@ public class BudgetItemAdapter extends BaseAdapter{
         holder.itemPriceDate.setText(Utility.currency + " " + String.valueOf((int)budgetItems.get(position).getPrice()) + " On " + budgetItems.get(position).getCreatedAt());
         holder.personName.setText("By: " + budgetItems.get(position).getPersonName());
 
-        rowView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        rowView.setTag(position);
 
+        rowView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+
+                int position = Integer.parseInt(view.getTag().toString());
+
+                final BudgetItem budgetItemToRemove = budgetItems.get(position);
+
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity);
+                alertDialog.setTitle("Delete?");
+                alertDialog.setMessage("Delete this item?");
+                alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                alertDialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        ((SingleBudgetActivity)activity).removeBudgetItem(budgetItemToRemove.getId());
+                    }
+                });
+
+                alertDialog.show();
+
+                return true;
             }
         });
+
         return rowView;
     }
 

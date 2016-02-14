@@ -6,6 +6,7 @@ import android.widget.Toast;
 import com.budget.buddy.MainActivity;
 import com.budget.buddy.pojo.Budget;
 import com.budget.buddy.pojo.BudgetShare;
+import com.budget.buddy.pojo.Category;
 import com.budget.buddy.pojo.Customer;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -45,6 +46,8 @@ public class Utility {
 
     public static Map<Integer,Budget> budgets = new HashMap<Integer,Budget>();
     public static Map<Integer,BudgetShare> budgetShares = new HashMap<Integer,BudgetShare>();
+
+    public static Map<Integer,Category> categories = new HashMap<Integer,Category>();
 
     static{
 /*
@@ -266,6 +269,74 @@ public class Utility {
 
                         Utility.budgetShares = budgetShares;
 
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                //((MainActivity)applicationContext).setShareCount();
+            }
+
+            // When the response returned by REST has Http response code other than '200'
+            @Override
+            public void onFailure(int statusCode, Throwable error,
+                                  String content) {
+                // When Http response code is '404'
+                System.out.println("Share status = " + statusCode);
+                if (statusCode == 404) {
+                }
+                // When Http response code is '500'
+                else if (statusCode == 500) {
+                }
+                // When Http response code other than 404, 500
+                else {
+                }
+            }
+        });
+    }
+
+    public static void loadCategories() {
+
+        RequestParams params = new RequestParams();
+        params.put("customer_id", String.valueOf(Utility.customerId));
+
+        AsyncHttpClient client = new AsyncHttpClient();
+
+        client.get(Utility.server + "/all-categories", params, new AsyncHttpResponseHandler() {
+            // When the response returned by REST has Http response code '200'
+            @Override
+            public void onSuccess(String response) {
+
+                HashMap<Integer, BudgetShare> budgetShares = new HashMap<Integer, BudgetShare>();
+
+                try {
+                    JSONObject obj = new JSONObject(response);
+                    if (obj.getString("message").equals("found")) {
+
+                        JSONArray budgetSharesArray = obj.getJSONArray("categories");
+
+                        for (int i = 0; i < budgetSharesArray.length(); i++) {
+                            JSONObject budgetJSON = budgetSharesArray.getJSONObject(i);
+
+                            Category category = new Category();
+                            category.setId(budgetJSON.getInt("id"));
+                            category.setName(budgetJSON.getString("name"));
+
+                            categories.put(category.getId(), category);
+                        }
+
+                        Utility.categories = categories;
+
+                    } else if (obj.getString("message").equals("empty")) {
+                        Category category = new Category();
+
+                        category.setId(-1);
+                        category.setName("no shares");
+
+                        categories.put(category.getId(), category);
+
+                        Utility.categories = categories;
                     }
 
                 } catch (JSONException e) {
