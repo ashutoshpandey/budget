@@ -116,12 +116,21 @@ public class MainActivity extends Activity {
                 profile();
                 break;
 
+            case R.id.menu_category:
+                categories();
+                break;
+
             case R.id.menu_logout:
                 logout();
                 break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void categories() {
+        Intent i = new Intent(MainActivity.this, CategoryActivity.class);
+        startActivity(i);
     }
 
     @Override

@@ -16,7 +16,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/etCategory"
+            android:id="@+id/etCategoryName"
             android:hint="Name" />
 
         <Button
@@ -30,6 +30,7 @@
         <ListView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/lvCategories" />
+            android:id="@+id/lvCategories"
+            android:padding="0dp" />
     </LinearLayout>
 </RelativeLayout>

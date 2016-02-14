@@ -39,6 +39,12 @@
             android:editable="false"
             android:focusableInTouchMode="true" />
 
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinCategories"
+            android:layout_marginTop="20dp" />
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

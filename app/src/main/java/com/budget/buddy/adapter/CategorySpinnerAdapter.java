@@ -12,10 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.budget.buddy.CategoryActivity;
-import com.budget.buddy.MainActivity;
 import com.budget.buddy.R;
-import com.budget.buddy.SingleBudgetActivity;
-import com.budget.buddy.data.Utility;
 import com.budget.buddy.pojo.Category;
 
 import java.util.ArrayList;
@@ -23,14 +20,14 @@ import java.util.ArrayList;
 /**
  * Created by Ashutosh on 2/1/2016.
  */
-public class CategoryAdapter extends BaseAdapter{
+public class CategorySpinnerAdapter extends BaseAdapter{
 
     private Activity activity;
     private ArrayList<Category> categories;
     private static LayoutInflater inflater=null;
     public Resources res;
 
-    public CategoryAdapter(Activity activity, ArrayList<Category> categories){
+    public CategorySpinnerAdapter(Activity activity, ArrayList<Category> categories){
         this.activity = activity;
         this.categories = categories;
     }

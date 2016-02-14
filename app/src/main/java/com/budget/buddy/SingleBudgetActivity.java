@@ -87,112 +87,6 @@ public class SingleBudgetActivity extends Activity {
         });
     }
 
-    private void removeItem(int pos) {
-/*
-        RequestParams params = new RequestParams();
-
-        //params.put("item_id", itemId);
-
-        AsyncHttpClient client = new AsyncHttpClient();
-
-        client.get(Utility.server + "/remove-item", params, new AsyncHttpResponseHandler() {
-            // When the response returned by REST has Http response code '200'
-            @Override
-            public void onSuccess(String response) {
-
-                try {
-                    JSONObject obj = new JSONObject(response);
-                    if (obj.getString("message").equals("found")) {
-
-                        JSONArray budgetSharesArray = obj.getJSONArray("budgetItems");
-
-                        double currentAmount = 0;
-
-                        budgetItems.clear();
-
-                        for (int i = 0; i < budgetSharesArray.length(); i++) {
-                            JSONObject budgetJSON = budgetSharesArray.getJSONObject(i);
-
-                            BudgetItem budgetItem = new BudgetItem();
-
-                            budgetItem.setId(budgetJSON.getInt("id"));
-                            budgetItem.setName(budgetJSON.getString("name"));
-                            budgetItem.setPrice(budgetJSON.getDouble("price"));
-
-                            String createDate;
-                            try {
-                                createDate = new SimpleDateFormat("dd-MMM-yyyy").format(new SimpleDateFormat("yyyy-mm-dd").parse(budgetJSON.getString("entry_date")));
-                            }
-                            catch(Exception ex){
-                                createDate = budgetJSON.getString("entry_date");
-                            }
-                            budgetItem.setCreatedAt(createDate);
-
-                            JSONObject customerJSON = budgetJSON.getJSONObject("customer");
-
-                            budgetItem.setPersonName(customerJSON.getString("name"));
-
-                            currentAmount += budgetJSON.getDouble("price");
-
-                            budgetItems.add(budgetItem);
-                        }
-
-                        adapter.notifyDataSetChanged();
-
-                        if(budgetItems.isEmpty()){
-                            tvBudgetItems.setVisibility(View.GONE);
-                            listView.setVisibility(View.GONE);
-                            imgHistory.setVisibility(View.GONE);
-                        }
-                        else {
-                            tvBudgetItems.setVisibility(View.VISIBLE);
-                            listView.setVisibility(View.VISIBLE);
-                        }
-
-                        tvCurrentAmount.setText(Utility.currency + " " + String.valueOf((int)currentAmount));
-
-                        int maxAmount = (int)budget.getMaxAmount();
-
-                        if(currentAmount <= maxAmount)
-                            tvCurrentAmount.setTextColor(Color.rgb(0,200,0));
-                        else
-                            tvCurrentAmount.setTextColor(Color.RED);
-
-                    } else if (obj.getString("message").equals("empty")) {
-                        tvBudgetItems.setVisibility(View.GONE);
-                        listView.setVisibility(View.GONE);
-                        imgHistory.setVisibility(View.GONE);
-                        tvCurrentAmount.setText(Utility.currency + " 0");
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Invalid data", Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-                }
-            }
-
-            // When the response returned by REST has Http response code other than '200'
-            @Override
-            public void onFailure(int statusCode, Throwable error,
-                                  String content) {
-                // When Http response code is '404'
-                if (statusCode == 404) {
-                    Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code is '500'
-                else if (statusCode == 500) {
-                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code other than 404, 500
-                else {
-                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-*/
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -353,7 +247,7 @@ public class SingleBudgetActivity extends Activity {
 
         if(budget!=null){
 
-            tvBudgetName.setText(budget.getName());
+            tvBudgetName.setText(budget.getName().toUpperCase());
             tvBudgetAmount.setText(Utility.currency + " " + String.valueOf((int)budget.getMaxAmount()));
             tvBudgetDurationValue.setText(budget.getDuration());
 
