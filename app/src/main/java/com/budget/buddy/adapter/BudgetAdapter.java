@@ -2,7 +2,6 @@ package com.budget.buddy.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,10 +10,8 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.budget.buddy.MainActivity;
-import com.budget.buddy.SingleBudgetActivity;
 import com.budget.buddy.data.Utility;
 import com.budget.buddy.pojo.Budget;
-import com.budget.buddy.pojo.BudgetItem;
 
 import java.util.ArrayList;
 
@@ -85,6 +82,7 @@ public class BudgetAdapter extends BaseAdapter{
                     if(rowTag==-1)
                         return;
 
+                    Utility.currentBudgetType = "created";
                     Utility.currentBudgetId = rowTag;
                     ((MainActivity) activity).openSingleBudget();
                 }

@@ -2,7 +2,9 @@ package com.budget.buddy;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -27,6 +29,8 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.budget.buddy.R;
 
@@ -36,6 +40,9 @@ public class MainActivity extends Activity {
     Fragment fragmentDashboard = new FragmentDashboard();
     Fragment fragmentBudget = new FragmentBudget();
     Fragment fragmentBudgetShare = new FragmentBudgetShare();
+
+    private Timer timer;
+    private BudgetTimerTask timerTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +81,16 @@ public class MainActivity extends Activity {
         actionBar.addTab(Tab2);
         actionBar.addTab(Tab3);
 
+        timer = new Timer();
+        timerTask = new BudgetTimerTask();
+        startTimer();
+
         loadCustomerBudgetsFromServer();
         loadCustomerBudgetSharesFromServer();
+    }
+
+    public void startTimer(){
+        timer.schedule(timerTask, 60000, 60000);
     }
 
     @Override
@@ -109,6 +124,37 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+
+        new AlertDialog.Builder(this)
+                .setMessage("Do you want to close the app?")
+                .setTitle("Close?")
+                .setPositiveButton(R.string.exit_yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        if(timer!=null){
+                            timer.cancel();
+                            timer = null;
+                            timerTask = null;
+                        }
+
+                        Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+                        homeIntent.addCategory( Intent.CATEGORY_HOME );
+                        homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(homeIntent);
+                    }
+                })
+                .setNeutralButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).show();
+
+        return;
+    }
 /***************************************** custom methods ************************************/
 
     private void createBudget() {
@@ -124,194 +170,19 @@ public class MainActivity extends Activity {
     private void logout(){
         finish();
     }
-/*
+
     private void loadCustomerBudgetSharesFromServer() {
-
-        RequestParams params = new RequestParams();
-        params.put("customer_id", String.valueOf(Utility.customerId));
-
-        AsyncHttpClient client = new AsyncHttpClient();
-
-        client.get(Utility.server + "/all-budget-shares", params, new AsyncHttpResponseHandler() {
-            // When the response returned by REST has Http response code '200'
-            @Override
-            public void onSuccess(String response) {
-
-                HashMap<Integer, BudgetShare> budgetShares = new HashMap<Integer, BudgetShare>();
-
-                try {
-                    JSONObject obj = new JSONObject(response);
-                    if (obj.getString("message").equals("found")) {
-
-                        JSONArray budgetSharesArray = obj.getJSONArray("budgetShares");
-
-                        for (int i = 0; i < budgetSharesArray.length(); i++) {
-                            JSONObject budgetJSON = budgetSharesArray.getJSONObject(i);
-
-                            BudgetShare budgetShare = new BudgetShare();
-
-                            budgetShare.setId(budgetJSON.getInt("id"));
-                            budgetShare.setName(budgetJSON.getString("name"));
-
-                            budgetShares.put(budgetShare.getId(), budgetShare);
-                        }
-
-                        Utility.budgetShares = budgetShares;
-
-                        setShareCount();
-
-                    } else if (obj.getString("message").equals("empty")) {
-                        BudgetShare budgetShare = new BudgetShare();
-
-                        budgetShare.setId(-1);
-                        budgetShare.setName("no shares");
-
-                        budgetShares.put(budgetShare.getId(), budgetShare);
-
-                        Utility.budgetShares = budgetShares;
-
-                        setShareCount();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Invalid data", Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-                }
-            }
-
-            // When the response returned by REST has Http response code other than '200'
-            @Override
-            public void onFailure(int statusCode, Throwable error,
-                                  String content) {
-                // When Http response code is '404'
-                if (statusCode == 404) {
-                    Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code is '500'
-                else if (statusCode == 500) {
-                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code other than 404, 500
-                else {
-                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-    }
-*/
-    private void loadCustomerBudgetSharesFromServer() {
-        Utility.loadShares(MainActivity.this);
+        Utility.loadShares();
     }
 
     private void loadCustomerBudgetsFromServer() {
-        Utility.loadBudgets(MainActivity.this);
+        Utility.loadBudgets();
     }
-/*
-    private void loadCustomerBudgetsFromServer() {
 
-        if(Utility.customer==null)
-            return;
-
-        RequestParams params = new RequestParams();
-        params.put("customer_id", String.valueOf(Utility.customerId));
-
-        AsyncHttpClient client = new AsyncHttpClient();
-
-        client.get(Utility.server + "/all-budgets", params, new AsyncHttpResponseHandler() {
-            // When the response returned by REST has Http response code '200'
-            @Override
-            public void onSuccess(String response) {
-
-                HashMap<Integer, Budget> budgets = new HashMap<Integer, Budget>();
-                try {
-                    JSONObject obj = new JSONObject(response);
-
-                    if (obj.getString("message").equals("found")) {
-
-                        JSONArray budgetsArray = obj.getJSONArray("budgets");
-
-                        for (int i = 0; i < budgetsArray.length(); i++) {
-                            JSONObject budgetJSON = budgetsArray.getJSONObject(i);
-
-                            Budget budget = new Budget();
-
-                            String budgetType = budgetJSON.getString("budget_type").toUpperCase();
-                            String duration = "N/A";
-
-                            if(budgetType.equals("MONTHLY")) {
-                                Calendar cal = Calendar.getInstance();
-                                SimpleDateFormat dateFormat = new SimpleDateFormat("MMM");
-                                String month = dateFormat.format(cal.getTime());
-                                int year = cal.get(Calendar.YEAR);
-
-                                duration = month + "-" + year;
-                                budget.setDuration(duration);
-                            }
-                            else {
-                                String startDate = budgetJSON.getString("start_date");
-                                String endDate = budgetJSON.getString("end_date");
-
-                                duration = startDate + " - " + endDate;
-                                budget.setDuration(duration);
-                            }
-
-                            budget.setId(budgetJSON.getInt("id"));
-                            budget.setName(budgetJSON.getString("name"));
-                            budget.setMaxAmount(budgetJSON.getDouble("max_amount"));
-                            budget.setBudgetType(budgetType);
-
-                            budgets.put(budget.getId(), budget);
-                        }
-
-                        Utility.budgets = budgets;
-
-                        setBudgetCount();
-
-                    }
-                    else if(obj.getString("message").equals("empty")){
-                        Budget budget = new Budget();
-
-                        budget.setId(-1);
-                        budget.setName("no budgets");
-
-                        budgets.put(budget.getId(), budget);
-
-                        Utility.budgets = budgets;
-
-                        setBudgetCount();
-                    }
-                    else {
-                        Toast.makeText(getApplicationContext(), "Invalid data", Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-                }
-            }
-
-            // When the response returned by REST has Http response code other than '200'
-            @Override
-            public void onFailure(int statusCode, Throwable error,
-                                  String content) {
-                // When Http response code is '404'
-                if (statusCode == 404) {
-                    Toast.makeText(getApplicationContext(), "Requested resource not found", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code is '500'
-                else if (statusCode == 500) {
-                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code other than 404, 500
-                else {
-                    Toast.makeText(getApplicationContext(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-    }
-*/
     public void setBudgetCount() {
         ((FragmentDashboard)fragmentDashboard).setBudgetCount();
+        ((FragmentBudget)fragmentBudget).refreshBudgets();
+        ((FragmentBudgetShare)fragmentBudgetShare).refreshBudgets();
     }
 
     public void setShareCount() {
@@ -322,4 +193,24 @@ public class MainActivity extends Activity {
         Intent i = new Intent(MainActivity.this, SingleBudgetActivity.class);
         startActivity(i);
     }
+
+    class BudgetTimerTask extends TimerTask {
+
+        @Override
+        public void run() {
+
+            runOnUiThread(new Runnable(){
+
+                @Override
+                public void run() {
+                    System.out.println("Loading budgets and shares");
+                    Utility.loadBudgets();
+                    Utility.loadShares();
+
+                    setShareCount();
+                    setBudgetCount();
+                }});
+        }
+    }
+
 }

@@ -37,6 +37,7 @@ import com.budget.buddy.R;
 public class FragmentBudget extends Fragment{
 
     private ListView listView;
+    private BudgetAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,37 +51,15 @@ public class FragmentBudget extends Fragment{
         for(Map.Entry<Integer, Budget> entry : Utility.budgets.entrySet())
             budgets.add(entry.getValue());
 
-        BudgetAdapter adapter = new BudgetAdapter(getActivity(), budgets);
+        adapter = new BudgetAdapter(getActivity(), budgets);
 
         listView.setAdapter(adapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-
-                // ListView Clicked item index
-                int itemPosition = position;
-
-                // ListView Clicked item value
-                Set<Map.Entry<Integer, Budget>> entries = Utility.budgets.entrySet();
-
-                int i = -1;
-                for(Map.Entry<Integer,Budget> entry : entries){
-                    ++i;
-
-                    if(i==itemPosition) {
-                        Utility.currentBudgetId = entry.getKey();
-                        break;
-                    }
-                }
-
-                Intent in = new Intent(getActivity(), SingleBudgetActivity.class);
-                startActivity(in);
-            }
-
-        });
         return rootView;
+    }
+
+    public void refreshBudgets() {
+        if(adapter!=null)
+            adapter.notifyDataSetChanged();
     }
 }

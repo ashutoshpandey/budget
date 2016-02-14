@@ -34,6 +34,8 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.budget.buddy.R;
 
@@ -49,6 +51,9 @@ public class SingleBudgetActivity extends Activity {
     private ListView listView;
 
     private Budget budget;
+
+    private Timer timer;
+    private BudgetItemsTimerTask timerTask;
 
     private BudgetItemAdapter adapter;
     private ArrayList<BudgetItem> budgetItems = new ArrayList<>();
@@ -86,12 +91,36 @@ public class SingleBudgetActivity extends Activity {
         super.onResume();
 
         initializeData();
+
+        startTimer();
+    }
+
+    @Override
+    public void onStop() {
+        super.onResume();
+
+        if(timer!=null){
+            timer.cancel();
+            timer = null;
+            timerTask = null;
+        }
+    }
+
+    public void startTimer(){
+        timer = new Timer();
+        timerTask = new BudgetItemsTimerTask();
+
+        timer.schedule(timerTask, 60000, 60000);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_single_budget, menu);
+
+        if(Utility.currentBudgetType.equals("shared"))
+            menu.removeItem(R.id.menu_edit_budget);
+
         return true;
     }
 
@@ -130,7 +159,7 @@ public class SingleBudgetActivity extends Activity {
 
         final EditText input = new EditText(this);
 
-        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
 
         builder.setPositiveButton("Share", new DialogInterface.OnClickListener() {
@@ -208,7 +237,12 @@ public class SingleBudgetActivity extends Activity {
 
     private void initializeData() {
 
-        budget = Utility.budgets.get(Utility.currentBudgetId);
+        if(Utility.currentBudgetType.equals("created"))
+            budget = Utility.budgets.get(Utility.currentBudgetId);
+        else {
+            BudgetShare budgetShare = Utility.budgetShares.get(Utility.currentSharedBudgetId);
+            budget = budgetShare.getBudget();
+        }
 
         if(budget!=null){
 
@@ -227,10 +261,19 @@ public class SingleBudgetActivity extends Activity {
         int month = cal.get(Calendar.MONTH);
         int year = cal.get(Calendar.YEAR);
 
-        String yearMonth = year + "," + month;
+        final String yearMonth = year + "," + month;
 
-        RequestParams params = new RequestParams();
-        params.put("budget_id", String.valueOf(Utility.currentBudgetId));
+        final RequestParams params = new RequestParams();
+
+        final String budgetId;
+        if(Utility.currentBudgetType.equals("created"))
+            budgetId = String.valueOf(Utility.currentBudgetId);
+        else
+            budgetId = String.valueOf(Utility.budgetShares.get(Utility.currentSharedBudgetId).getBudget().getId());
+
+        System.out.println("budget shared id = " + budgetId + " , " + Utility.currentSharedBudgetId);
+
+        params.put("budget_id", budgetId);
         params.put("yearMonth", yearMonth);
 
         AsyncHttpClient client = new AsyncHttpClient();
@@ -247,6 +290,8 @@ public class SingleBudgetActivity extends Activity {
                         JSONArray budgetSharesArray = obj.getJSONArray("budgetItems");
 
                         double currentAmount = 0;
+
+                        budgetItems.clear();
 
                         for (int i = 0; i < budgetSharesArray.length(); i++) {
                             JSONObject budgetJSON = budgetSharesArray.getJSONObject(i);
@@ -329,5 +374,19 @@ public class SingleBudgetActivity extends Activity {
             }
         });
 
+    }
+
+    class BudgetItemsTimerTask extends TimerTask {
+
+        @Override
+        public void run() {
+
+            runOnUiThread(new Runnable(){
+
+                @Override
+                public void run() {
+                    loadBudgetItems();
+                }});
+        }
     }
 }

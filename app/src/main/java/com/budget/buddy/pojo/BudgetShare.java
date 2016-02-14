@@ -6,18 +6,11 @@ package com.budget.buddy.pojo;
 public class BudgetShare {
 
     private int id;
-    private int customerId;
+    private Customer customer;
 
-    private String budgetType;
-    private String name;
+    private String text;
 
-    public String getBudgetType() {
-        return budgetType;
-    }
-
-    public void setBudgetType(String budgetType) {
-        this.budgetType = budgetType;
-    }
+    private Budget budget;
 
     public int getId() {
         return id;
@@ -27,11 +20,27 @@ public class BudgetShare {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCustomer(Customer fromCustomer) {
+        this.customer = fromCustomer;
+    }
+
+    public Budget getBudget() {
+        return budget;
+    }
+
+    public void setBudget(Budget budget) {
+        this.budget = budget;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }

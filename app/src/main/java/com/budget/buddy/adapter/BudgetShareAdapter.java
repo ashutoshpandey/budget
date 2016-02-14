@@ -54,23 +54,29 @@ public class BudgetShareAdapter extends BaseAdapter{
 
         ViewHolder holder=new ViewHolder();
         View rowView;
-        rowView = inflater.inflate(R.layout.budget_list, null);
+        rowView = inflater.inflate(R.layout.budget_shared_list, null);
 
         holder.name=(TextView) rowView.findViewById(R.id.tvBudgetListName);
+        holder.sharedWith=(TextView) rowView.findViewById(R.id.tvBudgetListSharedWith);
         holder.type=(TextView) rowView.findViewById(R.id.tvBudgetListType);
 
         BudgetShare budgetShare = budgetShares.get(position);
 
-        String name = budgetShare.getName().toLowerCase();
+        String text = budgetShare.getText();
 
-        if(name.equals("no shares")) {
+        if(text.equals("no shares")) {
             holder.name.setText("No budgets shared");
         }
         else{
+            String name = budgetShare.getBudget().getName().toLowerCase();
             name = name.substring(0, 1).toUpperCase() + name.substring(1);
 
+            String budgetType = budgetShare.getBudget().getBudgetType();
+            budgetType = budgetType.substring(0, 1).toUpperCase() + budgetType.substring(1);
+
             holder.name.setText(name);
-            holder.type.setText("Type: " + budgetShare.getBudgetType());
+            holder.type.setText(budgetType);
+            holder.sharedWith.setText(budgetShare.getCustomer().getName());
 
             rowView.setTag(budgetShare.getId());
 
@@ -81,7 +87,8 @@ public class BudgetShareAdapter extends BaseAdapter{
                     if(rowTag==-1)
                         return;
 
-                    Utility.currentBudgetId = rowTag;
+                    Utility.currentBudgetType = "shared";
+                    Utility.currentSharedBudgetId = rowTag;
                     ((MainActivity) activity).openSingleBudget();
                 }
             });
@@ -91,6 +98,7 @@ public class BudgetShareAdapter extends BaseAdapter{
 
     public static class ViewHolder{
         public TextView name;
+        public TextView sharedWith;
         public TextView type;
     }
 }

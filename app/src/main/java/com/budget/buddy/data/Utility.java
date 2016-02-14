@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TimerTask;
 
 /**
  * Created by Ashutosh on 1/14/2016.
@@ -35,10 +36,12 @@ public class Utility {
 
     public static String currency = "Rs.";
 
-    public static String server = "http://10.0.2.2/budget/public";
-    //public static String server = "http://54.169.114.127/laravel/public/index.php/";
+    //public static String server = "http://10.0.2.2/budget/public";
+    public static String server = "http://54.169.114.127/laravel/public/index.php/";
 
     public static int currentBudgetId;
+    public static int currentSharedBudgetId;
+    public static String currentBudgetType;
 
     public static Map<Integer,Budget> budgets = new HashMap<Integer,Budget>();
     public static Map<Integer,BudgetShare> budgetShares = new HashMap<Integer,BudgetShare>();
@@ -79,7 +82,7 @@ public class Utility {
         return monthName;
     }
 
-    public static void loadBudgets(final Context applicationContext){
+    public static void loadBudgets(){
 
         if(Utility.customer==null)
             return;
@@ -150,8 +153,6 @@ public class Utility {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-                ((MainActivity)applicationContext).setBudgetCount();
             }
 
             // When the response returned by REST has Http response code other than '200'
@@ -174,8 +175,8 @@ public class Utility {
         });
     }
 
-    public static void loadShares(Context applicationContext) {
-System.out.println("Loading sharings");
+    public static void loadShares() {
+
         RequestParams params = new RequestParams();
         params.put("customer_id", String.valueOf(Utility.customerId));
 
@@ -187,7 +188,7 @@ System.out.println("Loading sharings");
             public void onSuccess(String response) {
 
                 HashMap<Integer, BudgetShare> budgetShares = new HashMap<Integer, BudgetShare>();
-System.out.println("Shares = " + response);
+
                 try {
                     JSONObject obj = new JSONObject(response);
                     if (obj.getString("message").equals("found")) {
@@ -198,22 +199,59 @@ System.out.println("Shares = " + response);
                             JSONObject budgetJSON = budgetSharesArray.getJSONObject(i);
 
                             BudgetShare budgetShare = new BudgetShare();
+                            budgetShare.setId(budgetJSON.getInt("id"));
+                            budgetShare.setText("shared");
 
                             JSONObject withCustomerJSON = null;
-                            if(budgetJSON.getJSONObject("to_customer")!=null)
+
+                            if(budgetJSON.has("to_customer"))
                                 withCustomerJSON = budgetJSON.getJSONObject("to_customer");
-                            else if(budgetJSON.getJSONObject("from_customer")!=null)
+                            else if(budgetJSON.has("from_customer"))
                                 withCustomerJSON = budgetJSON.getJSONObject("from_customer");
 
                             JSONObject sharedBudgetJSON = budgetJSON.getJSONObject("budget");
-                            String budgetType = sharedBudgetJSON.getString("budget_type");
 
-                            if(withCustomerJSON!=null){
-                                budgetShare.setId(budgetJSON.getInt("id"));
-                                budgetShare.setName(withCustomerJSON.getString("name"));
-                                budgetShare.setBudgetType(budgetType);
-                                budgetShares.put(budgetShare.getId(), budgetShare);
+                            if(sharedBudgetJSON!=null) {
+
+                                Budget budget = new Budget();
+
+                                String budgetType = sharedBudgetJSON.getString("budget_type").toUpperCase();
+                                budget.setId(sharedBudgetJSON.getInt("id"));
+                                budget.setBudgetType(sharedBudgetJSON.getString("budget_type"));
+                                budget.setName(sharedBudgetJSON.getString("name"));
+                                budget.setMaxAmount(sharedBudgetJSON.getDouble("max_amount"));
+                                String duration = "N/A";
+
+                                if(budgetType.equals("MONTHLY")) {
+                                    Calendar cal = Calendar.getInstance();
+                                    SimpleDateFormat dateFormat = new SimpleDateFormat("MMM");
+                                    String month = dateFormat.format(cal.getTime());
+                                    int year = cal.get(Calendar.YEAR);
+
+                                    duration = month + "-" + year;
+                                }
+                                else {
+                                    String startDate = sharedBudgetJSON.getString("start_date");
+                                    String endDate = sharedBudgetJSON.getString("end_date");
+
+                                    duration = startDate + " - " + endDate;
+                                }
+
+                                budget.setDuration(duration);
+
+                                budgetShare.setBudget(budget);
+
                             }
+                            if(withCustomerJSON!=null){
+
+                                Customer customer = new Customer();
+
+                                customer.setName(withCustomerJSON.getString("name"));
+
+                                budgetShare.setCustomer(customer);
+                            }
+
+                            budgetShares.put(budgetShare.getId(), budgetShare);
                         }
 
                         Utility.budgetShares = budgetShares;
@@ -222,13 +260,14 @@ System.out.println("Shares = " + response);
                         BudgetShare budgetShare = new BudgetShare();
 
                         budgetShare.setId(-1);
-                        budgetShare.setName("no shares");
+                        budgetShare.setText("no shares");
 
                         budgetShares.put(budgetShare.getId(), budgetShare);
 
                         Utility.budgetShares = budgetShares;
 
                     }
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

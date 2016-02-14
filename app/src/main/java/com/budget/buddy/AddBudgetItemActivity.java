@@ -62,18 +62,44 @@ public class AddBudgetItemActivity extends Activity {
             }
         });
 
+        final Calendar myCalendar = Calendar.getInstance();
+
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                String myFormat = "MM/dd/yyyy"; //In which you need put here
+                SimpleDateFormat sdf = new SimpleDateFormat(myFormat);
+
+                etDate.setText(sdf.format(myCalendar.getTime()));
+            }
+        };
+
+        etDate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus) {
+                    new DatePickerDialog(AddBudgetItemActivity.this, date, myCalendar
+                            .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                            myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                }
+            }
+        });
+
         etDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDatePickerDialog(v);
+                new DatePickerDialog(AddBudgetItemActivity.this, date, myCalendar
+                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
-    }
-
-    public void showDatePickerDialog(View v) {
-        //dateFragment = new DatePickerFragment();
-        //dateFragment.show(getFragmentManager(), "datePicker");
-
     }
 
     private void addItem() {
@@ -84,7 +110,11 @@ public class AddBudgetItemActivity extends Activity {
         String price = etPrice.getText().toString();
         String date = etDate.getText().toString();
 
-        params.put("budget_id", String.valueOf(Utility.currentBudgetId));
+        if(Utility.currentBudgetType.equals("created"))
+            params.put("budget_id", String.valueOf(Utility.currentBudgetId));
+        else
+            params.put("budget_id", String.valueOf(Utility.budgetShares.get(Utility.currentSharedBudgetId).getBudget().getId()));
+
         params.put("customer_id", Utility.customer.getId());
         params.put("name", name);
         params.put("price", price);
@@ -134,28 +164,5 @@ public class AddBudgetItemActivity extends Activity {
             }
         });
     }
-/*
-    class DatePickerFragment extends DialogFragment implements
-            DatePickerDialog.OnDateSetListener {
 
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the current date as the default date in the picker
-            final Calendar c = Calendar.getInstance();
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
-
-            // Create a new instance of DatePickerDialog and return it
-            return new DatePickerDialog(getActivity(), this, year, month, day);
-        }
-
-        public void onDateSet(DatePicker view, int year, int month, int day) {
-            mCalendar.set(Calendar.YEAR, year);
-            mCalendar.set(Calendar.MONTH, month);
-            mCalendar.set(Calendar.DAY_OF_MONTH, day);
-            //setDate();
-        }
-    }
-*/
 }

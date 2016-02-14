@@ -33,7 +33,8 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/imgHistory"
                     android:src="@drawable/history"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    android:background="#ffffffff" />
 
             </TableRow>
 
@@ -108,7 +109,8 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Items"
             android:id="@+id/tvBudgetItems"
-            android:layout_marginTop="20dp" />
+            android:layout_marginTop="20dp"
+            android:visibility="gone" />
 
         <ListView
             android:layout_width="match_parent"
@@ -117,7 +119,8 @@
             android:paddingLeft="0dp"
             android:paddingRight="0dp"
             android:layout_marginLeft="0dp"
-            android:layout_marginRight="0dp" />
+            android:layout_marginRight="0dp"
+            android:visibility="gone" />
 
     </LinearLayout>
 </RelativeLayout>

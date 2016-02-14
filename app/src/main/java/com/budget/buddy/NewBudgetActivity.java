@@ -185,6 +185,9 @@ public class NewBudgetActivity extends Activity {
                         etBudgetLimit.setText("");
                         rdGroupDate.check(R.id.rdBudgetTypeMonthly);
 
+                        Utility.loadBudgets();
+                        Utility.loadShares();
+
                     } else if (obj.getString("message").equals("duplicate")) {
                         Toast.makeText(getApplicationContext(), "Duplicate budget name", Toast.LENGTH_LONG).show();
                     } else {

@@ -30,6 +30,7 @@ import com.budget.buddy.R;
 public class FragmentBudgetShare extends Fragment{
 
     private ListView listView;
+    private BudgetShareAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,7 +43,7 @@ public class FragmentBudgetShare extends Fragment{
         for(Map.Entry<Integer, BudgetShare> entry : Utility.budgetShares.entrySet())
             budgetShares.add(entry.getValue());
 
-        BudgetShareAdapter adapter = new BudgetShareAdapter(getActivity(), budgetShares);
+        adapter = new BudgetShareAdapter(getActivity(), budgetShares);
 
         // Assign adapter to ListView
         listView.setAdapter(adapter);
@@ -67,6 +68,7 @@ public class FragmentBudgetShare extends Fragment{
 
                     if(i==itemPosition) {
                         Utility.currentBudgetId = entry.getKey();
+                        Utility.currentBudgetType = "shared";
                         break;
                     }
                 }
@@ -77,5 +79,10 @@ public class FragmentBudgetShare extends Fragment{
 
         });
         return rootView;
+    }
+
+    public void refreshBudgets() {
+        if(adapter!=null)
+            adapter.notifyDataSetChanged();
     }
 }
