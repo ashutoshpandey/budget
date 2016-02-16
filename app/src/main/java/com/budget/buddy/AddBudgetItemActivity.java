@@ -2,12 +2,9 @@ package com.budget.buddy;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -16,12 +13,12 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.budget.buddy.adapter.CategoryAdapter;
 import com.budget.buddy.adapter.CategorySpinnerAdapter;
+import com.budget.buddy.adapter.PaymentModeSpinnerAdapter;
 import com.budget.buddy.data.Utility;
-import com.budget.buddy.R;
 import com.budget.buddy.pojo.BudgetShare;
 import com.budget.buddy.pojo.Category;
+import com.budget.buddy.pojo.PaymentMode;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -49,12 +46,16 @@ public class AddBudgetItemActivity extends Activity {
     private Calendar mCalendar;
 
     private Spinner spinner;
+    private Spinner spinnerPaymentModes;
 
     private ArrayList<Category> listCategories = new ArrayList<>();
+
+    private ArrayList<PaymentMode> listPaymentModes = new ArrayList<>();
 
     public static Map<Integer,Category> categories = new HashMap<Integer,Category>();
 
     private CategorySpinnerAdapter adapter;
+    private PaymentModeSpinnerAdapter adapterPaymentMode;
 
     private static final String DATE_FORMAT = "yyyy-MM-dd";
 
@@ -70,13 +71,18 @@ public class AddBudgetItemActivity extends Activity {
         btnAddItem = (Button)findViewById(R.id.btnAddItem);
 
         spinner = (Spinner)findViewById(R.id.spinCategories);
+        spinnerPaymentModes = (Spinner)findViewById(R.id.spinPaymentModes);
 
         adapter = new CategorySpinnerAdapter(this, listCategories);
+        adapterPaymentMode = new PaymentModeSpinnerAdapter(this, listPaymentModes);
 
         // Assign adapter to ListView
         spinner.setAdapter(adapter);
+        spinnerPaymentModes.setAdapter(adapterPaymentMode);
 
         Utility.loadCategories();
+
+        loadPaymentModes(Utility.customerId);
 
         initializeEvents();
     }
@@ -149,8 +155,9 @@ public class AddBudgetItemActivity extends Activity {
         String name = etName.getText().toString();
         String price = etPrice.getText().toString();
         String date = etDate.getText().toString();
+        String paymentMode = "";
 
-        int categoryId = listCategories.get(spinner.getSelectedItemPosition()).getId();
+        int categoryId = listPaymentModes.get(spinner.getSelectedItemPosition()).getId();
 
         if(Utility.currentBudgetType.equals("created"))
             params.put("budget_id", String.valueOf(Utility.currentBudgetId));
@@ -162,6 +169,7 @@ public class AddBudgetItemActivity extends Activity {
         params.put("name", name);
         params.put("price", price);
         params.put("date", date);
+        params.put("payment_mode", paymentMode);
 
         AsyncHttpClient client = new AsyncHttpClient();
 
@@ -209,7 +217,7 @@ public class AddBudgetItemActivity extends Activity {
     }
 
     public void loadCategories(int customerId) {
-System.out.println("customer id = " + customerId);
+
         RequestParams params = new RequestParams();
         params.put("customer_id", String.valueOf(customerId));
 
@@ -219,7 +227,7 @@ System.out.println("customer id = " + customerId);
             // When the response returned by REST has Http response code '200'
             @Override
             public void onSuccess(String response) {
-System.out.println(response);
+
                 categories.clear();
 
                 try {
@@ -249,10 +257,79 @@ System.out.println(response);
 
                     listCategories.clear();
 
-                    for(Map.Entry<Integer, Category> entry : categories.entrySet())
+                    for (Map.Entry<Integer, Category> entry : categories.entrySet())
                         listCategories.add(entry.getValue());
 
                     adapter.notifyDataSetChanged();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            // When the response returned by REST has Http response code other than '200'
+            @Override
+            public void onFailure(int statusCode, Throwable error,
+                                  String content) {
+                // When Http response code is '404'
+                System.out.println("Share status = " + statusCode);
+                if (statusCode == 404) {
+                }
+                // When Http response code is '500'
+                else if (statusCode == 500) {
+                }
+                // When Http response code other than 404, 500
+                else {
+                }
+            }
+        });
+    }
+
+    public void loadPaymentModes(String customerId) {
+
+        RequestParams params = new RequestParams();
+        params.put("customer_id", customerId);
+
+        AsyncHttpClient client = new AsyncHttpClient();
+
+        client.get(Utility.server + "/all-payment-modes", params, new AsyncHttpResponseHandler() {
+            // When the response returned by REST has Http response code '200'
+            @Override
+            public void onSuccess(String response) {
+
+                HashMap<Integer, BudgetShare> budgetShares = new HashMap<Integer, BudgetShare>();
+
+                try {
+                    JSONObject obj = new JSONObject(response);
+                    if (obj.getString("message").equals("found")) {
+
+                        JSONArray paymentModesArray = obj.getJSONArray("payment_modes");
+
+                        PaymentMode paymentMode = new PaymentMode();
+
+                        paymentMode.setId(-1);
+                        paymentMode.setName("Cash");
+
+                        listPaymentModes.add(paymentMode);
+
+                        for (int i = 0; i < paymentModesArray.length(); i++) {
+                            JSONObject paymentModeJSON = paymentModesArray.getJSONObject(i);
+
+                            paymentMode = new PaymentMode();
+                            paymentMode.setId(paymentModeJSON.getInt("id"));
+                            paymentMode.setName(paymentModeJSON.getString("name"));
+
+                            listPaymentModes.add(paymentMode);
+                        }
+
+                    } else if (obj.getString("message").equals("empty")) {
+                        PaymentMode paymentMode = new PaymentMode();
+
+                        paymentMode.setId(-1);
+                        paymentMode.setName("Cash");
+
+                        listPaymentModes.add(paymentMode);
+                    }
 
                 } catch (JSONException e) {
                     e.printStackTrace();

@@ -20,4 +20,5 @@
 
     <string name="exit_yes">Yes</string>
     <string name="title_activity_category">Categories</string>
+    <string name="title_activity_payment_mode">PaymentModeActivity</string>
 </resources>
