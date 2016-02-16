@@ -28,13 +28,16 @@
                     android:id="@+id/tvBudgetName"
                     android:layout_weight="1" />
 
-                <ImageButton
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/imgHistory"
                     android:src="@drawable/history"
                     android:visibility="gone"
-                    android:background="#ffffffff" />
+                    android:maxHeight="32dp"
+                    android:maxWidth="32dp"
+                    android:minHeight="32dp"
+                    android:minWidth="32dp" />
 
             </TableRow>
 
@@ -101,20 +104,38 @@
                     android:layout_weight="1" />
             </TableRow>
 
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Items"
+                    android:id="@+id/tvBudgetItems"
+                    android:layout_marginTop="20dp"
+                    android:visibility="gone"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Categorize"
+                    android:id="@+id/tvBudgetCategorize"
+                    android:layout_marginTop="20dp"
+                    android:visibility="gone"
+                    android:layout_weight="1"
+                    android:gravity="right" />
+            </TableRow>
+
         </TableLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Items"
-            android:id="@+id/tvBudgetItems"
-            android:layout_marginTop="20dp"
-            android:visibility="gone" />
-
         <ListView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
             android:id="@+id/listView"
             android:paddingLeft="0dp"
             android:paddingRight="0dp"

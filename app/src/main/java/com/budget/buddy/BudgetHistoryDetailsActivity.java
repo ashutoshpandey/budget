@@ -33,6 +33,7 @@ public class BudgetHistoryDetailsActivity extends Activity {
     private BudgetItemAdapter adapter;
 
     private String yearMonth;
+    private int budgetId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +46,7 @@ public class BudgetHistoryDetailsActivity extends Activity {
                 yearMonth = null;
             } else {
                 yearMonth= extras.getString("yearMonth");
+                budgetId = extras.getInt("budget_id");
             }
         } else {
             yearMonth = (String) savedInstanceState.getSerializable("yearMonth");
@@ -63,7 +65,14 @@ public class BudgetHistoryDetailsActivity extends Activity {
     private void loadBudgetItems() {
 
         RequestParams params = new RequestParams();
-        params.put("budget_id", String.valueOf(Utility.currentBudgetId));
+
+        int budgetId;
+        if(Utility.currentBudgetType.equals("created"))
+            budgetId = Utility.currentBudgetId;
+        else
+            budgetId = Utility.budgetShares.get(Utility.currentSharedBudgetId).getBudget().getId();
+
+        params.put("budget_id", String.valueOf(budgetId));
         params.put("yearMonth", yearMonth);
 
         AsyncHttpClient client = new AsyncHttpClient();
@@ -90,10 +99,11 @@ public class BudgetHistoryDetailsActivity extends Activity {
 
                             String createDate;
                             try {
-                                createDate = new SimpleDateFormat("dd-MMM-yyyy").format(new SimpleDateFormat("yyyy-mm-dd").parse(budgetJSON.getString("entry_date")));
+                                createDate = new SimpleDateFormat("dd-MMM-yyyy").format(new SimpleDateFormat("yyyy-MM-dd").parse(budgetJSON.getString("entry_date")));
                             } catch (Exception ex) {
                                 createDate = budgetJSON.getString("entry_date");
                             }
+
                             budgetItem.setCreatedAt(createDate);
 
                             JSONObject customerJSON = budgetJSON.getJSONObject("customer");

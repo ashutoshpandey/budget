@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,41 +65,51 @@ public class BudgetItemAdapter extends BaseAdapter{
         holder.itemPriceDate=(TextView) rowView.findViewById(R.id.tvBudgetItemPriceDate);
         holder.personName=(TextView) rowView.findViewById(R.id.tvBudgetPersonName);
 
-        String name = budgetItems.get(position).getName().toLowerCase();
+        BudgetItem budgetItem = budgetItems.get(position);
+
+        String name = budgetItem.getName().toLowerCase();
         name = name.substring(0, 1).toUpperCase() + name.substring(1);
 
         holder.itemName.setText(name);
-        holder.itemPriceDate.setText(Utility.currency + " " + String.valueOf((int)budgetItems.get(position).getPrice()) + " On " + budgetItems.get(position).getCreatedAt());
-        holder.personName.setText("By: " + budgetItems.get(position).getPersonName());
 
-        rowView.setTag(position);
+        if(budgetItem.getId()==0){
+            holder.itemName.setTextColor(Color.BLUE);
+            holder.itemPriceDate.setVisibility(View.GONE);
+            holder.personName.setVisibility(View.GONE);
+        }
+        else {
+            holder.itemPriceDate.setText(Utility.currency + " " + String.valueOf((int) budgetItems.get(position).getPrice()) + " On " + budgetItems.get(position).getCreatedAt());
+            holder.personName.setText("By: " + budgetItems.get(position).getPersonName());
 
-        rowView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
+            rowView.setTag(position);
 
-                int position = Integer.parseInt(view.getTag().toString());
+            rowView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
 
-                final BudgetItem budgetItemToRemove = budgetItems.get(position);
+                    int position = Integer.parseInt(view.getTag().toString());
 
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity);
-                alertDialog.setTitle("Delete?");
-                alertDialog.setMessage("Delete this item?");
-                alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-                alertDialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        ((SingleBudgetActivity)activity).removeBudgetItem(budgetItemToRemove.getId());
-                    }
-                });
+                    final BudgetItem budgetItemToRemove = budgetItems.get(position);
 
-                alertDialog.show();
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity);
+                    alertDialog.setTitle("Delete?");
+                    alertDialog.setMessage("Delete this item?");
+                    alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    alertDialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            ((SingleBudgetActivity) activity).removeBudgetItem(budgetItemToRemove.getId());
+                        }
+                    });
 
-                return true;
-            }
-        });
+                    alertDialog.show();
+
+                    return true;
+                }
+            });
+        }
 
         return rowView;
     }

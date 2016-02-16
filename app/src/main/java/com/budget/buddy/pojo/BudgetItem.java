@@ -8,20 +8,11 @@ public class BudgetItem {
     private int id;
     private int customerId;
     private int budgetId;
-
     private double price;
-
     private String name;
 
-    public String getPersonName() {
-        return personName;
-    }
-
-    public void setPersonName(String personName) {
-        this.personName = personName;
-    }
-
     private String personName;
+    private String categoryName;
     private String status;
     private String remarks;
 
@@ -89,5 +80,21 @@ public class BudgetItem {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public String getPersonName() {
+        return personName;
+    }
+
+    public void setPersonName(String personName) {
+        this.personName = personName;
     }
 }

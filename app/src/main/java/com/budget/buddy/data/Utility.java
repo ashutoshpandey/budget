@@ -49,6 +49,8 @@ public class Utility {
 
     public static Map<Integer,Category> categories = new HashMap<Integer,Category>();
 
+    public static int lastTab = 0;
+
     static{
 /*
         projectProperties = new Properties();
@@ -99,7 +101,7 @@ public class Utility {
             // When the response returned by REST has Http response code '200'
             @Override
             public void onSuccess(String response) {
-
+System.out.println(response);
                 HashMap<Integer, Budget> budgets = new HashMap<Integer, Budget>();
                 try {
                     JSONObject obj = new JSONObject(response);
@@ -134,6 +136,7 @@ public class Utility {
                             }
 
                             budget.setId(budgetJSON.getInt("id"));
+                            budget.setCustomerId(budgetJSON.getInt("customer_id"));
                             budget.setName(budgetJSON.getString("name"));
                             budget.setMaxAmount(budgetJSON.getDouble("max_amount"));
                             budget.setBudgetType(budgetType);
@@ -220,6 +223,7 @@ public class Utility {
 
                                 String budgetType = sharedBudgetJSON.getString("budget_type").toUpperCase();
                                 budget.setId(sharedBudgetJSON.getInt("id"));
+                                budget.setCustomerId(sharedBudgetJSON.getInt("customer_id"));
                                 budget.setBudgetType(sharedBudgetJSON.getString("budget_type"));
                                 budget.setName(sharedBudgetJSON.getString("name"));
                                 budget.setMaxAmount(sharedBudgetJSON.getDouble("max_amount"));
@@ -326,24 +330,18 @@ public class Utility {
                             categories.put(category.getId(), category);
                         }
 
-                        Utility.categories = categories;
-
                     } else if (obj.getString("message").equals("empty")) {
                         Category category = new Category();
 
                         category.setId(-1);
-                        category.setName("no shares");
+                        category.setName("no categories");
 
                         categories.put(category.getId(), category);
-
-                        Utility.categories = categories;
                     }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-                //((MainActivity)applicationContext).setShareCount();
             }
 
             // When the response returned by REST has Http response code other than '200'

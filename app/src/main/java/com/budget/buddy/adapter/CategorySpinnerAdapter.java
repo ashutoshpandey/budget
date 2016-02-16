@@ -64,7 +64,8 @@ public class CategorySpinnerAdapter extends BaseAdapter{
         String name = category.getName().toLowerCase();
 
         if(name.equals("no categories")) {
-            holder.name.setText("No categories created");
+            holder.name.setText("Uncategorized");
+            rowView.setTag(0);
         }
         else{
             name = name.substring(0, 1).toUpperCase() + name.substring(1);
@@ -77,25 +78,6 @@ public class CategorySpinnerAdapter extends BaseAdapter{
                 @Override
                 public boolean onLongClick(View v) {
                     final int categoryId = Integer.parseInt(v.getTag().toString());
-                    if (categoryId != -1) {
-
-                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity);
-                        alertDialog.setTitle("Delete?");
-                        alertDialog.setMessage("Delete this item?");
-                        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        });
-                        alertDialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                ((CategoryActivity) activity).removeCategory(categoryId);
-                            }
-                        });
-
-                        alertDialog.show();
-
-                        return true;
-                    }
 
                     return true;
                 }

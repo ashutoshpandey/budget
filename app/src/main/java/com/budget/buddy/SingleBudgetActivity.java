@@ -13,7 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +23,7 @@ import com.budget.buddy.pojo.Budget;
 import com.budget.buddy.pojo.BudgetItem;
 import com.budget.buddy.pojo.BudgetShare;
 import com.budget.buddy.data.Utility;
+import com.budget.buddy.pojo.Category;
 import com.budget.buddy.pojo.Customer;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -35,8 +36,11 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.TreeMap;
 
 import com.budget.buddy.R;
 
@@ -47,7 +51,8 @@ public class SingleBudgetActivity extends Activity {
     private TextView tvBudgetName;
     private TextView tvBudgetDurationValue;
     private TextView tvBudgetItems;
-    private ImageButton imgHistory;
+    private TextView tvCategorize;
+    private ImageView imgHistory;
 
     private ListView listView;
 
@@ -58,6 +63,9 @@ public class SingleBudgetActivity extends Activity {
 
     private BudgetItemAdapter adapter;
     private ArrayList<BudgetItem> budgetItems = new ArrayList<>();
+    private ArrayList<BudgetItem> budgetItemsToShow = new ArrayList<>();
+
+    public static Map<Integer,Category> categories = new HashMap<Integer,Category>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,13 +75,14 @@ public class SingleBudgetActivity extends Activity {
         tvBudgetAmount = (TextView) findViewById(R.id.tvBudgetAmount);
         tvCurrentAmount = (TextView) findViewById(R.id.tvCurrentAmount);
         tvBudgetName = (TextView) findViewById(R.id.tvBudgetName);
+        tvCategorize = (TextView) findViewById(R.id.tvBudgetCategorize);
         tvBudgetItems = (TextView) findViewById(R.id.tvBudgetItems);
         tvBudgetDurationValue = (TextView) findViewById(R.id.tvBudgetDurationValue);
-        imgHistory = (ImageButton) findViewById(R.id.imgHistory);
+        imgHistory = (ImageView) findViewById(R.id.imgHistory);
 
         listView = (ListView) findViewById(R.id.listView);
 
-        adapter = new BudgetItemAdapter(this, budgetItems);
+        adapter = new BudgetItemAdapter(this, budgetItemsToShow);
 
         // Assign adapter to ListView
         listView.setAdapter(adapter);
@@ -85,6 +94,82 @@ public class SingleBudgetActivity extends Activity {
                 startActivity(i);
             }
         });
+
+        tvCategorize.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(tvCategorize.getText().toString().equals("Categorize")) {
+                    categorizeBudgetItems(true);
+                    tvCategorize.setText("Simplify");
+                }
+                else{
+                    categorizeBudgetItems(false);
+                    tvCategorize.setText("Categorize");
+                }
+            }
+        });
+    }
+
+    private void categorizeBudgetItems(boolean categorize) {
+
+        budgetItemsToShow.clear();
+
+        if(categorize) {
+
+            // get budget items mapped to category names
+            TreeMap<String, ArrayList<BudgetItem>> map = new TreeMap<>();
+
+            for (Map.Entry<Integer, Category> entry : categories.entrySet()) {
+
+                String name = entry.getValue().getName();
+System.out.println("category name = " + name);
+                ArrayList<BudgetItem> budgetItems = getBudgetItems(name);
+
+                if (budgetItems != null && !budgetItems.isEmpty())
+                    map.put(name, budgetItems);
+            }
+
+            ArrayList<BudgetItem> budgetItems = getBudgetItems("uncategorized");
+            if (budgetItems != null && !budgetItems.isEmpty())
+                map.put("uncategorized", budgetItems);
+
+            for (Map.Entry<String, ArrayList<BudgetItem>> entry : map.entrySet()) {
+                BudgetItem item = new BudgetItem();
+
+                String categoryName =  entry.getKey();
+                categoryName = categoryName.substring(0,1).toUpperCase() + categoryName.substring(1);
+
+                item.setId(0);      // represents name of category
+                item.setName("Category : " + categoryName);
+
+                budgetItemsToShow.add(item);
+
+                for (BudgetItem budgetItem : entry.getValue()) {
+                    budgetItemsToShow.add(budgetItem);
+                }
+            }
+        }
+        else{
+            for(BudgetItem budgetItem : budgetItems)
+                budgetItemsToShow.add(budgetItem);
+        }
+
+        adapter.notifyDataSetChanged();
+    }
+
+    private ArrayList<BudgetItem> getBudgetItems(String name) {
+
+        ArrayList<BudgetItem> budgetItemsInCategory = new ArrayList<>();
+
+        for(BudgetItem item : budgetItems) {
+
+            if(item.getCategoryName()!=null)
+                if (item.getCategoryName().toLowerCase().equals(name.toLowerCase()))
+                    budgetItemsInCategory.add(item);
+        }
+
+        return budgetItemsInCategory;
     }
 
     @Override
@@ -206,7 +291,6 @@ public class SingleBudgetActivity extends Activity {
                     }
                 } catch (JSONException e) {
                     Toast.makeText(getApplicationContext(), "Cannot share at this moment", Toast.LENGTH_LONG).show();
-                    System.out.println("champa");
                     e.printStackTrace();
                 }
             }
@@ -238,20 +322,32 @@ public class SingleBudgetActivity extends Activity {
 
     private void initializeData() {
 
-        if(Utility.currentBudgetType.equals("created"))
+        categories.clear();
+
+        if(Utility.currentBudgetType.equals("created")) {
+System.out.println("this person created budget");
+            // copy current person categories to this activity categories
+            for(Map.Entry<Integer, Category> entry : Utility.categories.entrySet())
+                categories.put(entry.getKey(), entry.getValue());
+
             budget = Utility.budgets.get(Utility.currentBudgetId);
+
+            if(budget!=null){
+
+                tvBudgetName.setText(budget.getName().toUpperCase());
+                tvBudgetAmount.setText(Utility.currency + " " + String.valueOf((int)budget.getMaxAmount()));
+                tvBudgetDurationValue.setText(budget.getDuration());
+
+                loadBudgetItems();
+            }
+        }
         else {
+            System.out.println("this budget is shared");
+            // load categories of shared person
             BudgetShare budgetShare = Utility.budgetShares.get(Utility.currentSharedBudgetId);
             budget = budgetShare.getBudget();
-        }
 
-        if(budget!=null){
-
-            tvBudgetName.setText(budget.getName().toUpperCase());
-            tvBudgetAmount.setText(Utility.currency + " " + String.valueOf((int)budget.getMaxAmount()));
-            tvBudgetDurationValue.setText(budget.getDuration());
-
-            loadBudgetItems();
+            loadCategories(budget);
         }
     }
 
@@ -281,7 +377,7 @@ public class SingleBudgetActivity extends Activity {
             // When the response returned by REST has Http response code '200'
             @Override
             public void onSuccess(String response) {
-
+System.out.println(response);
                 try {
                     JSONObject obj = new JSONObject(response);
                     if (obj.getString("message").equals("found")) {
@@ -291,6 +387,7 @@ public class SingleBudgetActivity extends Activity {
                         double currentAmount = 0;
 
                         budgetItems.clear();
+                        budgetItemsToShow.clear();
 
                         for (int i = 0; i < budgetSharesArray.length(); i++) {
                             JSONObject budgetJSON = budgetSharesArray.getJSONObject(i);
@@ -303,7 +400,7 @@ public class SingleBudgetActivity extends Activity {
 
                             String createDate;
                             try {
-                                createDate = new SimpleDateFormat("dd-MMM-yyyy").format(new SimpleDateFormat("yyyy-mm-dd").parse(budgetJSON.getString("entry_date")));
+                                createDate = new SimpleDateFormat("dd-MMM-yyyy").format(new SimpleDateFormat("yyyy-MM-dd").parse(budgetJSON.getString("entry_date")));
                             }
                             catch(Exception ex){
                                 createDate = budgetJSON.getString("entry_date");
@@ -311,24 +408,40 @@ public class SingleBudgetActivity extends Activity {
                             budgetItem.setCreatedAt(createDate);
 
                             JSONObject customerJSON = budgetJSON.getJSONObject("customer");
-
                             budgetItem.setPersonName(customerJSON.getString("name"));
+
+                            String categoryId = budgetJSON.isNull("category_id") ? null : budgetJSON.getString("category_id");
+
+                            if(categoryId!=null) {
+                                if(categories.containsKey(Integer.parseInt(categoryId)))
+                                    budgetItem.setCategoryName(categories.get(Integer.parseInt(categoryId)).getName());
+                            }
+                            else
+                                budgetItem.setCategoryName("Uncategorized");
 
                             currentAmount += budgetJSON.getDouble("price");
 
                             budgetItems.add(budgetItem);
                         }
 
+                        budgetItemsToShow.clear();
+
+                        for(BudgetItem budgetItem : budgetItems)
+                            budgetItemsToShow.add(budgetItem);
+
                         adapter.notifyDataSetChanged();
 
-                        if(budgetItems.isEmpty()){
+                        if(budgetItemsToShow.isEmpty()){
                             tvBudgetItems.setVisibility(View.GONE);
+                            tvCategorize.setVisibility(View.GONE);
                             listView.setVisibility(View.GONE);
                             imgHistory.setVisibility(View.GONE);
                         }
                         else {
                             tvBudgetItems.setVisibility(View.VISIBLE);
+                            tvCategorize.setVisibility(View.VISIBLE);
                             listView.setVisibility(View.VISIBLE);
+                            imgHistory.setVisibility(View.VISIBLE);
                         }
 
                         tvCurrentAmount.setText(Utility.currency + " " + String.valueOf((int)currentAmount));
@@ -342,6 +455,7 @@ public class SingleBudgetActivity extends Activity {
 
                     } else if (obj.getString("message").equals("empty")) {
                         tvBudgetItems.setVisibility(View.GONE);
+                        tvCategorize.setVisibility(View.GONE);
                         listView.setVisibility(View.GONE);
                         imgHistory.setVisibility(View.GONE);
                         tvCurrentAmount.setText(Utility.currency + " 0");
@@ -436,5 +550,76 @@ public class SingleBudgetActivity extends Activity {
                     loadBudgetItems();
                 }});
         }
+    }
+
+    public void loadCategories(final Budget budget) {
+
+        RequestParams params = new RequestParams();
+        params.put("customer_id", String.valueOf(budget.getCustomerId()));
+
+        AsyncHttpClient client = new AsyncHttpClient();
+
+        client.get(Utility.server + "/all-categories", params, new AsyncHttpResponseHandler() {
+            // When the response returned by REST has Http response code '200'
+            @Override
+            public void onSuccess(String response) {
+
+                HashMap<Integer, BudgetShare> budgetShares = new HashMap<Integer, BudgetShare>();
+
+                try {
+                    JSONObject obj = new JSONObject(response);
+                    if (obj.getString("message").equals("found")) {
+
+                        JSONArray budgetSharesArray = obj.getJSONArray("categories");
+
+                        for (int i = 0; i < budgetSharesArray.length(); i++) {
+                            JSONObject budgetJSON = budgetSharesArray.getJSONObject(i);
+
+                            Category category = new Category();
+                            category.setId(budgetJSON.getInt("id"));
+                            category.setName(budgetJSON.getString("name"));
+
+                            categories.put(category.getId(), category);
+                        }
+
+                    } else if (obj.getString("message").equals("empty")) {
+                        Category category = new Category();
+
+                        category.setId(-1);
+                        category.setName("no categories");
+
+                        categories.put(category.getId(), category);
+                    }
+
+                    if(budget!=null){
+
+                        tvBudgetName.setText(budget.getName().toUpperCase());
+                        tvBudgetAmount.setText(Utility.currency + " " + String.valueOf((int)budget.getMaxAmount()));
+                        tvBudgetDurationValue.setText(budget.getDuration());
+
+                        loadBudgetItems();
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            // When the response returned by REST has Http response code other than '200'
+            @Override
+            public void onFailure(int statusCode, Throwable error,
+                                  String content) {
+                // When Http response code is '404'
+                System.out.println("Share status = " + statusCode);
+                if (statusCode == 404) {
+                }
+                // When Http response code is '500'
+                else if (statusCode == 500) {
+                }
+                // When Http response code other than 404, 500
+                else {
+                }
+            }
+        });
     }
 }

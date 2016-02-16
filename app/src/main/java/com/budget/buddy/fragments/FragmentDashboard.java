@@ -47,7 +47,7 @@ public class FragmentDashboard extends Fragment{
     }
 
     public void setBudgetShareCount(){
-        System.out.println("Share count = " + Utility.budgetShares.size());
+
         if(Utility.budgetShares.size()==0 || (Utility.budgetShares.containsKey(-1) && Utility.budgetShares.get(-1).getText().equals("no shares")))
             tvTotalSharings.setText("0");
         else

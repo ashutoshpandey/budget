@@ -63,16 +63,20 @@ public class BudgetHistoryActivity extends Activity {
     }
 
     private void loadHistory() {
-        budget = Utility.budgets.get(Utility.currentBudgetId);
+
+        if(Utility.currentBudgetType.equals("created"))
+            budget = Utility.budgets.get(Utility.currentBudgetId);
+        else
+            budget = Utility.budgetShares.get(Utility.currentSharedBudgetId).getBudget();
 
         if(budget!=null)
-            loadBudgetItems();
+            loadBudgetItems(budget.getId());
     }
 
-    private void loadBudgetItems() {
+    private void loadBudgetItems(int budgetId) {
 
         RequestParams params = new RequestParams();
-        params.put("budget_id", String.valueOf(Utility.currentBudgetId));
+        params.put("budget_id", String.valueOf(budgetId));
 
         AsyncHttpClient client = new AsyncHttpClient();
 

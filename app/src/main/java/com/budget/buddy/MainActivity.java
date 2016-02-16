@@ -9,40 +9,32 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.budget.buddy.data.Utility;
 import com.budget.buddy.fragments.FragmentBudget;
 import com.budget.buddy.fragments.FragmentBudgetShare;
 import com.budget.buddy.fragments.FragmentDashboard;
 import com.budget.buddy.fragments.TabListener;
-import com.budget.buddy.pojo.Budget;
-import com.budget.buddy.pojo.BudgetShare;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.budget.buddy.R;
-
 public class MainActivity extends Activity {
 
-    ActionBar.Tab Tab1, Tab2, Tab3;
+    ActionBar.Tab tabDashboard, tabBudgets, tabShares;
     Fragment fragmentDashboard = new FragmentDashboard();
     Fragment fragmentBudget = new FragmentBudget();
     Fragment fragmentBudgetShare = new FragmentBudgetShare();
 
     private Timer timer;
     private BudgetTimerTask timerTask;
+
+    @Override
+    protected  void onResume(){
+        super.onResume();
+
+        getActionBar().setSelectedNavigationItem(Utility.lastTab);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,24 +54,26 @@ public class MainActivity extends Activity {
 
         // Set Tab Icon and Titles
 /*
-        Tab1 = actionBar.newTab().setIcon(R.drawable.tab1);
-        Tab2 = actionBar.newTab().setText("Tab2");
-        Tab3 = actionBar.newTab().setText("Tab3");
+        tabDashboard = actionBar.newTab().setIcon(R.drawable.tab1);
+        tabBudgets = actionBar.newTab().setText("tabBudgets");
+        tabShares = actionBar.newTab().setText("tabShares");
 */
 
-        Tab1 = actionBar.newTab().setText("Dashboard");
-        Tab2 = actionBar.newTab().setText("Budgets");
-        Tab3 = actionBar.newTab().setText("Sharing");
+        tabDashboard = actionBar.newTab().setText("Dashboard");
+        tabBudgets = actionBar.newTab().setText("Budgets");
+        tabShares = actionBar.newTab().setText("Sharing");
 
         // Set Tab Listeners
-        Tab1.setTabListener(new TabListener(fragmentDashboard));
-        Tab2.setTabListener(new TabListener(fragmentBudget));
-        Tab3.setTabListener(new TabListener(fragmentBudgetShare));
+        tabDashboard.setTabListener(new TabListener(fragmentDashboard));
+        tabBudgets.setTabListener(new TabListener(fragmentBudget));
+        tabShares.setTabListener(new TabListener(fragmentBudgetShare));
 
         // Add tabs to actionbar
-        actionBar.addTab(Tab1);
-        actionBar.addTab(Tab2);
-        actionBar.addTab(Tab3);
+        actionBar.addTab(tabDashboard);
+        actionBar.addTab(tabBudgets);
+        actionBar.addTab(tabShares);
+
+        getActionBar().setSelectedNavigationItem(Utility.lastTab);
 
         timer = new Timer();
         timerTask = new BudgetTimerTask();
@@ -87,10 +81,12 @@ public class MainActivity extends Activity {
 
         loadCustomerBudgetsFromServer();
         loadCustomerBudgetSharesFromServer();
+
+        Utility.loadCategories();
     }
 
     public void startTimer(){
-        timer.schedule(timerTask, 60000, 60000);
+        timer.schedule(timerTask, 2000, 60000);
     }
 
     @Override
@@ -212,7 +208,7 @@ public class MainActivity extends Activity {
 
                 @Override
                 public void run() {
-                    System.out.println("Loading budgets and shares");
+
                     Utility.loadBudgets();
                     Utility.loadShares();
 
