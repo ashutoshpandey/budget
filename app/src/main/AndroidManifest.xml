@@ -113,6 +113,13 @@
         <activity
             android:name=".PaymentModeActivity"
             android:label="@string/title_activity_payment_mode" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.budget.buddy.MainActivity" />
+        </activity>
+        <activity
+            android:name=".HomeActivity"
+            android:label="@string/title_activity_home" >
         </activity>
     </application>
 

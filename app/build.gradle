@@ -22,4 +22,5 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':android-async-http-1.4.4')
+    compile 'com.android.support:support-v4:23.1.1'
 }

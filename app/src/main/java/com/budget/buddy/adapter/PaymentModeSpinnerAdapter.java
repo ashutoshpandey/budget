@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 /**
  * Created by Ashutosh on 2/1/2016.
  */
-public class PaymentModeSpinnerAdapter extends BaseAdapter{
+public class PaymentModeSpinnerAdapter extends ArrayAdapter<PaymentMode>{
 
     private Activity activity;
     private ArrayList<PaymentMode> paymentModes;
@@ -25,27 +26,59 @@ public class PaymentModeSpinnerAdapter extends BaseAdapter{
     public Resources res;
 
     public PaymentModeSpinnerAdapter(Activity activity, ArrayList<PaymentMode> paymentModes){
+        super(activity, R.layout.payment_mode_list, paymentModes);
         this.activity = activity;
         this.paymentModes = paymentModes;
+        inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    @Override
-    public int getCount() {
-        return paymentModes.size();
-    }
 
     @Override
-    public Object getItem(int position) {
-        return position;
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
+    public View getDropDownView(int position, View convertView,ViewGroup parent) {
+        return getCustomView(position, convertView, parent);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        return getCustomView(position, convertView, parent);
+    }
+
+    public View getCustomView(int position, View convertView, ViewGroup parent) {
+
+        /********** Inflate spinner_rows.xml file for each row ( Defined below ) ************/
+        View row = inflater.inflate(R.layout.payment_mode_list, parent, false);
+
+        /***** Get each Model object from Arraylist ********/
+        PaymentMode paymentMode = paymentModes.get(position);
+
+        TextView label = (TextView) row.findViewById(R.id.tvPaymentMode);
+
+        if(position==0){
+
+            // Default selected Spinner item
+            label.setText("Cash");
+        }
+        else
+        {
+            label.setText(paymentMode.getName());
+/*
+            row.setTag(paymentMode.getId());
+
+            rowView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    final int paymentModeId = Integer.parseInt(v.getTag().toString());
+
+                    return true;
+                }
+            });
+*/
+        }
+
+        return row;
+    }
+
+    public View getView1(int position, View convertView, ViewGroup parent) {
 
         inflater = ( LayoutInflater )activity.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);

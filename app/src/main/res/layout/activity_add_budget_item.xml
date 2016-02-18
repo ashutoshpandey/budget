@@ -43,13 +43,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/spinCategories"
-            android:layout_marginTop="20dp" />
+            android:layout_marginTop="20dp"
+            android:focusableInTouchMode="true" />
 
         <Spinner
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/spinPaymentModes"
-            android:layout_marginTop="20dp" />
+            android:layout_marginTop="20dp"
+            android:focusableInTouchMode="false" />
 
         <Button
             android:layout_width="wrap_content"

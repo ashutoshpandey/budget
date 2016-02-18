@@ -8,6 +8,7 @@ import com.budget.buddy.pojo.Budget;
 import com.budget.buddy.pojo.BudgetShare;
 import com.budget.buddy.pojo.Category;
 import com.budget.buddy.pojo.Customer;
+import com.budget.buddy.pojo.PaymentMode;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -46,8 +47,8 @@ public class Utility {
 
     public static Map<Integer,Budget> budgets = new HashMap<Integer,Budget>();
     public static Map<Integer,BudgetShare> budgetShares = new HashMap<Integer,BudgetShare>();
-
     public static Map<Integer,Category> categories = new HashMap<Integer,Category>();
+    public static Map<Integer,PaymentMode> paymentModes = new HashMap<Integer,PaymentMode>();
 
     public static int lastTab = 0;
 
@@ -101,7 +102,7 @@ public class Utility {
             // When the response returned by REST has Http response code '200'
             @Override
             public void onSuccess(String response) {
-System.out.println(response);
+
                 HashMap<Integer, Budget> budgets = new HashMap<Integer, Budget>();
                 try {
                     JSONObject obj = new JSONObject(response);
@@ -337,6 +338,68 @@ System.out.println(response);
                         category.setName("no categories");
 
                         categories.put(category.getId(), category);
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            // When the response returned by REST has Http response code other than '200'
+            @Override
+            public void onFailure(int statusCode, Throwable error,
+                                  String content) {
+                // When Http response code is '404'
+                System.out.println("Share status = " + statusCode);
+                if (statusCode == 404) {
+                }
+                // When Http response code is '500'
+                else if (statusCode == 500) {
+                }
+                // When Http response code other than 404, 500
+                else {
+                }
+            }
+        });
+    }
+
+    public static void loadPaymentModes() {
+
+        RequestParams params = new RequestParams();
+        params.put("customer_id", String.valueOf(Utility.customerId));
+
+        AsyncHttpClient client = new AsyncHttpClient();
+
+        client.get(Utility.server + "/all-payment-modes", params, new AsyncHttpResponseHandler() {
+            // When the response returned by REST has Http response code '200'
+            @Override
+            public void onSuccess(String response) {
+
+                HashMap<Integer, BudgetShare> budgetShares = new HashMap<Integer, BudgetShare>();
+
+                try {
+                    JSONObject obj = new JSONObject(response);
+                    if (obj.getString("message").equals("found")) {
+
+                        JSONArray budgetSharesArray = obj.getJSONArray("paymentModes");
+
+                        for (int i = 0; i < budgetSharesArray.length(); i++) {
+                            JSONObject budgetJSON = budgetSharesArray.getJSONObject(i);
+
+                            PaymentMode paymentMode = new PaymentMode();
+                            paymentMode.setId(budgetJSON.getInt("id"));
+                            paymentMode.setName(budgetJSON.getString("name"));
+
+                            paymentModes.put(paymentMode.getId(), paymentMode);
+                        }
+
+                    } else if (obj.getString("message").equals("empty")) {
+                        PaymentMode paymentMode = new PaymentMode();
+
+                        paymentMode.setId(-1);
+                        paymentMode.setName("Cash");
+
+                        paymentModes.put(paymentMode.getId(), paymentMode);
                     }
 
                 } catch (JSONException e) {

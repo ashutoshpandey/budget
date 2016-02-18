@@ -20,5 +20,37 @@
 
     <string name="exit_yes">Yes</string>
     <string name="title_activity_category">Categories</string>
-    <string name="title_activity_payment_mode">PaymentModeActivity</string>
-</resources>
+    <string name="title_activity_payment_mode">Payment Modes</string>
+    <string name="title_activity_home">HomeActivity</string>
+
+    <string name="title_drawer_home">Dashboard</string>
+    <string name="title_drawer_new_budget">New Budget</string>
+    <string name="title_drawer_categories">Categories</string>
+    <string name="title_drawer_payment_modes">Payment Modes</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_example">Example action</string>
+
+    <!-- Nav Drawer Menu Items -->
+    <string-array name="nav_drawer_items">
+        <item >Home</item>
+        <item >Budgets</item>
+        <item >Sharings</item>
+        <item >Categories</item>
+        <item >Payment Modes</item>
+    </string-array>
+
+    <!-- Nav Drawer List Item Icons -->
+    <!-- Keep them in order as the titles are in -->
+    <array name="nav_drawer_icons">
+            <item>@drawable/ic_home</item>
+            <item>@drawable/ic_people</item>
+            <item>@drawable/ic_photos</item>
+            <item>@drawable/ic_communities</item>
+            <item>@drawable/ic_pages</item>
+            <item>@drawable/ic_whats_hot</item>
+        </array>
+
+    </resources>

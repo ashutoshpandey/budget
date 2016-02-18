@@ -146,7 +146,8 @@ public class SplashActivity extends Activity {
 
                         Utility.customer = new Customer(id, name, phone, photo, status, createdAt);
 
-                        Intent i = new Intent(SplashActivity.this, MainActivity.class);
+                        //Intent i = new Intent(SplashActivity.this, MainActivity.class);
+                        Intent i = new Intent(SplashActivity.this, HomeActivity.class);
                         startActivity(i);
                     }
                     else if (obj.getString("message").equals("empty")) {
@@ -157,7 +158,7 @@ public class SplashActivity extends Activity {
                         Toast.makeText(getApplicationContext(), "Invalid data", Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
-                    Toast.makeText(getApplicationContext(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Invalid data", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
             }
@@ -172,7 +173,7 @@ public class SplashActivity extends Activity {
                 }
                 // When Http response code is '500'
                 else if (statusCode == 500) {
-                    Toast.makeText(getApplicationContext(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Something went wrong at server", Toast.LENGTH_LONG).show();
                 }
                 // When Http response code other than 404, 500
                 else {

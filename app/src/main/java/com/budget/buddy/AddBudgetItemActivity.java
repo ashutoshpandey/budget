@@ -155,7 +155,7 @@ public class AddBudgetItemActivity extends Activity {
         String name = etName.getText().toString();
         String price = etPrice.getText().toString();
         String date = etDate.getText().toString();
-        String paymentMode = "";
+        String paymentMode = listPaymentModes.get(spinnerPaymentModes.getSelectedItemPosition()).getName();
 
         int categoryId = listPaymentModes.get(spinner.getSelectedItemPosition()).getId();
 
@@ -297,13 +297,11 @@ public class AddBudgetItemActivity extends Activity {
             @Override
             public void onSuccess(String response) {
 
-                HashMap<Integer, BudgetShare> budgetShares = new HashMap<Integer, BudgetShare>();
-
                 try {
                     JSONObject obj = new JSONObject(response);
                     if (obj.getString("message").equals("found")) {
 
-                        JSONArray paymentModesArray = obj.getJSONArray("payment_modes");
+                        JSONArray paymentModesArray = obj.getJSONArray("paymentModes");
 
                         PaymentMode paymentMode = new PaymentMode();
 
@@ -330,6 +328,8 @@ public class AddBudgetItemActivity extends Activity {
 
                         listPaymentModes.add(paymentMode);
                     }
+
+                    adapterPaymentMode.notifyDataSetChanged();
 
                 } catch (JSONException e) {
                     e.printStackTrace();

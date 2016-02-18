@@ -42,7 +42,7 @@ public class PaymentModeActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment_mode);
 
-        listView = (ListView)findViewById(R.id.lvCategories);
+        listView = (ListView)findViewById(R.id.lvPaymentModes);
 
         btnCreate = (Button)findViewById(R.id.btnAddPaymentMode);
         etName = (EditText)findViewById(R.id.etPaymentModeName);
@@ -145,10 +145,17 @@ public class PaymentModeActivity extends Activity {
 
                         JSONArray paymentModesArray = obj.getJSONArray("paymentModes");
 
+                        PaymentMode paymentMode = new PaymentMode();
+
+                        paymentMode.setId(-1);
+                        paymentMode.setName("Cash");
+
+                        paymentModes.add(paymentMode);
+
                         for (int i = 0; i < paymentModesArray.length(); i++) {
                             JSONObject paymentModeJSON = paymentModesArray.getJSONObject(i);
 
-                            PaymentMode paymentMode = new PaymentMode();
+                            paymentMode = new PaymentMode();
 
                             paymentMode.setId(paymentModeJSON.getInt("id"));
                             paymentMode.setName(paymentModeJSON.getString("name"));
@@ -162,7 +169,7 @@ public class PaymentModeActivity extends Activity {
                         PaymentMode paymentMode = new PaymentMode();
 
                         paymentMode.setId(-1);
-                        paymentMode.setName("No paymentModes");
+                        paymentMode.setName("Cash");
 
                         paymentModes.add(paymentMode);
 

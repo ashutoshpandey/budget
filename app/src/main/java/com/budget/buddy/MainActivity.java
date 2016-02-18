@@ -15,6 +15,7 @@ import com.budget.buddy.fragments.FragmentBudget;
 import com.budget.buddy.fragments.FragmentBudgetShare;
 import com.budget.buddy.fragments.FragmentDashboard;
 import com.budget.buddy.fragments.TabListener;
+import com.budget.buddy.pojo.PaymentMode;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -116,6 +117,10 @@ public class MainActivity extends Activity {
                 categories();
                 break;
 
+            case R.id.menu_payment_mode:
+                paymentModes();
+                break;
+
             case R.id.menu_logout:
                 logout();
                 break;
@@ -126,6 +131,11 @@ public class MainActivity extends Activity {
 
     private void categories() {
         Intent i = new Intent(MainActivity.this, CategoryActivity.class);
+        startActivity(i);
+    }
+
+    private void paymentModes() {
+        Intent i = new Intent(MainActivity.this, PaymentModeActivity.class);
         startActivity(i);
     }
 

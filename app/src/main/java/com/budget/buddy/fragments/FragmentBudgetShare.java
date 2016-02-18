@@ -7,12 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.budget.buddy.MainActivity;
 import com.budget.buddy.SingleBudgetActivity;
-import com.budget.buddy.adapter.BudgetAdapter;
 import com.budget.buddy.adapter.BudgetShareAdapter;
 import com.budget.buddy.pojo.Budget;
 import com.budget.buddy.pojo.BudgetShare;
@@ -35,7 +32,7 @@ public class FragmentBudgetShare extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.main_budgets, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_budgets, container, false);
 
         listView = (ListView) rootView.findViewById(R.id.listViewBudgets);
 
@@ -47,7 +44,6 @@ public class FragmentBudgetShare extends Fragment{
 
         // Assign adapter to ListView
         listView.setAdapter(adapter);
-
 
         // ListView Item Click Listener
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

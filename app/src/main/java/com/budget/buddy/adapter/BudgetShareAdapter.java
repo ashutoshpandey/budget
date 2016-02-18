@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.budget.buddy.HomeActivity;
 import com.budget.buddy.MainActivity;
 import com.budget.buddy.R;
 import com.budget.buddy.data.Utility;
@@ -89,7 +90,7 @@ public class BudgetShareAdapter extends BaseAdapter{
 
                     Utility.currentBudgetType = "shared";
                     Utility.currentSharedBudgetId = rowTag;
-                    ((MainActivity) activity).openSingleBudget();
+                    ((HomeActivity) activity).openSingleBudget();
                 }
             });
         }

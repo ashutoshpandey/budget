@@ -16,8 +16,10 @@ import com.budget.buddy.R;
  */
 public class FragmentDashboard extends Fragment{
 
-    private TextView tvTotalBudgets;
-    private TextView tvTotalSharings;
+    private TextView tvCountBudgets;
+    private TextView tvCountBudgetShares;
+    private TextView tvCountCategories;
+    private TextView tvCountPaymentModes;
 
     @Override
     public void onResume(){
@@ -25,15 +27,19 @@ public class FragmentDashboard extends Fragment{
 
         setBudgetCount();
         setBudgetShareCount();
+        setCategoryCount();
+        setPaymentModeCount();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.main_dashboard, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
-        tvTotalBudgets = (TextView)rootView.findViewById(R.id.tvTotalBudgets);
-        tvTotalSharings = (TextView)rootView.findViewById(R.id.tvTotalSharings);
+        tvCountBudgets = (TextView)rootView.findViewById(R.id.tvTotalBudgets);
+        tvCountBudgetShares = (TextView)rootView.findViewById(R.id.tvTotalSharings);
+        tvCountCategories = (TextView)rootView.findViewById(R.id.tvCountCategories);
+        tvCountPaymentModes = (TextView)rootView.findViewById(R.id.tvCountPaymentModes);
 
         return rootView;
     }
@@ -41,16 +47,32 @@ public class FragmentDashboard extends Fragment{
     public void setBudgetCount(){
 
         if(Utility.budgets.size()==0 || (Utility.budgets.containsKey(-1) && Utility.budgets.get(-1).getName().equals("no budgets")))
-            tvTotalBudgets.setText("0");
+            tvCountBudgets.setText("0");
         else
-            tvTotalBudgets.setText(String.valueOf(Utility.budgets.size()));
+            tvCountBudgets.setText(String.valueOf(Utility.budgets.size()));
     }
 
     public void setBudgetShareCount(){
 
         if(Utility.budgetShares.size()==0 || (Utility.budgetShares.containsKey(-1) && Utility.budgetShares.get(-1).getText().equals("no shares")))
-            tvTotalSharings.setText("0");
+            tvCountBudgetShares.setText("0");
         else
-            tvTotalSharings.setText(String.valueOf(Utility.budgetShares.size()));
+            tvCountBudgetShares.setText(String.valueOf(Utility.budgetShares.size()));
+    }
+
+    public void setCategoryCount(){
+
+        if(Utility.categories.size()==0 || (Utility.categories.get(0).getName().equals("Cash")))
+            tvCountBudgetShares.setText("0");
+        else
+            tvCountBudgetShares.setText(String.valueOf(Utility.categories.size()));
+    }
+
+    public void setPaymentModeCount(){
+
+        if(Utility.paymentModes.size()==0 || (Utility.budgetShares.containsKey(-1) && Utility.budgetShares.get(-1).getText().equals("no shares")))
+            tvCountBudgetShares.setText("0");
+        else
+            tvCountBudgetShares.setText(String.valueOf(Utility.budgetShares.size()));
     }
 }
