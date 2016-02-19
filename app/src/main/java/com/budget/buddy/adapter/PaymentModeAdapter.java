@@ -11,9 +11,12 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.budget.buddy.HomeActivity;
 import com.budget.buddy.PaymentModeActivity;
 import com.budget.buddy.R;
+import com.budget.buddy.fragments.FragmentPayment;
 import com.budget.buddy.pojo.PaymentMode;
+import com.budget.buddy.service.PaymentModeService;
 
 import java.util.ArrayList;
 
@@ -27,9 +30,13 @@ public class PaymentModeAdapter extends BaseAdapter{
     private static LayoutInflater inflater=null;
     public Resources res;
 
+    private PaymentModeService paymentModeService;
+
     public PaymentModeAdapter(Activity activity, ArrayList<PaymentMode> paymentModes){
         this.activity = activity;
         this.paymentModes = paymentModes;
+
+        paymentModeService = new PaymentModeService();
     }
 
     @Override
@@ -88,7 +95,7 @@ public class PaymentModeAdapter extends BaseAdapter{
                         });
                         alertDialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                ((PaymentModeActivity) activity).removePaymentMode(paymentModeId);
+                                paymentModeService.removePaymentMode(paymentModeId);
                             }
                         });
 

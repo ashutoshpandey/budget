@@ -6,25 +6,28 @@
     </style>
 
     <style name="countStyle">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">#C50E0E</item>
+        <item name="android:textColor">#000000</item>
         <item name="android:typeface">monospace</item>
-        <item name="android:textStyle">italic</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:padding">5dp</item>
-        <item name="android:gravity">right</item>
+        <item name="android:gravity">center_horizontal|center_vertical</item>
         <item name="android:layout_marginRight">20dp</item>
-        <item name="android:textSize">40sp</item>
+        <item name="android:textSize">35sp</item>
+        <item name="android:width">50dp</item>
+        <item name="android:height">50dp</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_marginTop">10dp</item>
     </style>
 
     <style name="countLabelStyle">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">#006633</item>
+        <item name="android:textColor">#2F96E8</item>
         <item name="android:typeface">monospace</item>
         <item name="android:textStyle">bold</item>
         <item name="android:padding">5dp</item>
         <item name="android:textSize">20sp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">0.7</item>
+        <item name="android:layout_marginTop">5dp</item>
     </style>
 
 </resources>

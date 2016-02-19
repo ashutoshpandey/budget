@@ -91,7 +91,7 @@ public class WelcomeActivity extends Activity {
 
                         Toast.makeText(getApplicationContext(), "You are successfully registered", Toast.LENGTH_LONG).show();
 
-                        Intent i = new Intent(WelcomeActivity.this, MainActivity.class);
+                        Intent i = new Intent(WelcomeActivity.this, HomeActivity.class);
                         startActivity(i);
                     }
                     else if (obj.getString("message").equals("duplicate")) {

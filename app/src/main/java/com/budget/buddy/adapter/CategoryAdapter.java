@@ -12,10 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.budget.buddy.CategoryActivity;
-import com.budget.buddy.MainActivity;
 import com.budget.buddy.R;
-import com.budget.buddy.SingleBudgetActivity;
-import com.budget.buddy.data.Utility;
 import com.budget.buddy.pojo.Category;
 
 import java.util.ArrayList;

@@ -19,6 +19,7 @@ import com.budget.buddy.data.Utility;
 import com.budget.buddy.pojo.BudgetShare;
 import com.budget.buddy.pojo.Category;
 import com.budget.buddy.pojo.PaymentMode;
+import com.budget.buddy.service.CategoryService;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -42,6 +43,8 @@ public class AddBudgetItemActivity extends Activity {
     private Button btnAddItem;
 
     private DialogFragment dateFragment;
+
+    private CategoryService categoryService;
 
     private Calendar mCalendar;
 
@@ -80,7 +83,8 @@ public class AddBudgetItemActivity extends Activity {
         spinner.setAdapter(adapter);
         spinnerPaymentModes.setAdapter(adapterPaymentMode);
 
-        Utility.loadCategories();
+        categoryService = new CategoryService();
+        categoryService.loadCategories();
 
         loadPaymentModes(Utility.customerId);
 

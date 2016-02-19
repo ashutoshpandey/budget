@@ -23,13 +23,15 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.budget.buddy.adapter.NavDrawerListAdapter;
-import com.budget.buddy.data.Utility;
 import com.budget.buddy.fragments.FragmentBudget;
 import com.budget.buddy.fragments.FragmentBudgetShare;
 import com.budget.buddy.fragments.FragmentCategory;
 import com.budget.buddy.fragments.FragmentDashboard;
 import com.budget.buddy.fragments.FragmentPayment;
 import com.budget.buddy.pojo.NavDrawerItem;
+import com.budget.buddy.service.BudgetService;
+import com.budget.buddy.service.CategoryService;
+import com.budget.buddy.service.PaymentModeService;
 
 public class HomeActivity extends Activity {
     private DrawerLayout mDrawerLayout;
@@ -44,6 +46,8 @@ public class HomeActivity extends Activity {
 
     private Timer timer;
     private BudgetTimerTask timerTask;
+
+    private BudgetService budgetService;
 
     // nav drawer title
     private CharSequence mDrawerTitle;
@@ -125,18 +129,15 @@ public class HomeActivity extends Activity {
             displayView(0);
         }
 
-
         timer = new Timer();
         timerTask = new BudgetTimerTask();
         startTimer();
 
+        budgetService = new BudgetService();
+
         loadCustomerBudgetsFromServer();
         loadCustomerBudgetSharesFromServer();
-
-        Utility.loadCategories();
-        Utility.loadPaymentModes();
     }
-
 
     @Override
     public void onBackPressed() {
@@ -169,6 +170,7 @@ public class HomeActivity extends Activity {
 
         return;
     }
+
     /**
      * Slide menu item click listener
      * */
@@ -302,21 +304,22 @@ public class HomeActivity extends Activity {
     }
 
     private void loadCustomerBudgetSharesFromServer() {
-        Utility.loadShares();
+        budgetService.loadShares();
     }
 
     private void loadCustomerBudgetsFromServer() {
-        Utility.loadBudgets();
+        budgetService.loadBudgets();
     }
 
     public void setBudgetCount() {
         ((FragmentDashboard)fragmentDashboard).setBudgetCount();
+        ((FragmentDashboard)fragmentDashboard).setBudgetShareCount();
         ((FragmentBudget)fragmentBudget).refreshBudgets();
         ((FragmentBudgetShare)fragmentBudgetShare).refreshBudgets();
     }
 
-    public void setShareCount() {
-        ((FragmentDashboard)fragmentDashboard).setBudgetShareCount();
+    public void setPaymentCount(int count) {
+        ((FragmentDashboard)fragmentDashboard).setPaymentModeCount();
     }
 
     public void openSingleBudget() {
@@ -334,14 +337,11 @@ public class HomeActivity extends Activity {
                 @Override
                 public void run() {
 
-                    Utility.loadBudgets();
-                    Utility.loadShares();
+                    budgetService.loadBudgets();
+                    budgetService.loadShares();
 
-                    setShareCount();
                     setBudgetCount();
                 }});
         }
     }
-
-
 }

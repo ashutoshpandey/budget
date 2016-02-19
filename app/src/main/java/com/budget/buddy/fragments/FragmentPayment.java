@@ -14,15 +14,8 @@ import android.widget.Toast;
 
 import com.budget.buddy.R;
 import com.budget.buddy.adapter.PaymentModeAdapter;
-import com.budget.buddy.data.Utility;
 import com.budget.buddy.pojo.PaymentMode;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.budget.buddy.service.PaymentModeService;
 
 import java.util.ArrayList;
 
@@ -35,6 +28,8 @@ public class FragmentPayment extends Fragment{
 
     private PaymentModeAdapter adapter;
 
+    private PaymentModeService paymentModeService;
+
     private ArrayList<PaymentMode> paymentModes = new ArrayList<>();
 
     private Button btnCreate;
@@ -43,6 +38,8 @@ public class FragmentPayment extends Fragment{
     @Override
     public void onResume(){
         super.onResume();
+
+        refreshData();
     }
 
     @Override
@@ -69,9 +66,20 @@ public class FragmentPayment extends Fragment{
             }
         });
 
+        paymentModeService = new PaymentModeService();
+
         loadPaymentModes();
-        
+
         return rootView;
+    }
+
+    public void loadPaymentModes(){
+        paymentModeService.loadPaymentModes(FragmentPayment.this, paymentModes);
+    }
+
+    public void refreshData(){
+        if(adapter!=null)
+            adapter.notifyDataSetChanged();
     }
 
     private void addPaymentMode() {
@@ -82,185 +90,28 @@ public class FragmentPayment extends Fragment{
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
 
-        RequestParams params = new RequestParams();
-
         String name = etName.getText().toString();
+        if(name.trim().length()==0){
+            Toast.makeText(getActivity(), "Please provide a name", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        params.put("customer_id", Utility.customer.getId());
-        params.put("name", name);
-
-        AsyncHttpClient client = new AsyncHttpClient();
-
-        client.post(Utility.server + "/add-payment-mode", params, new AsyncHttpResponseHandler() {
-            // When the response returned by REST has Http response code '200'
-            @Override
-            public void onSuccess(String response) {
-
-                try {
-                    JSONObject obj = new JSONObject(response);
-                    if (obj.getString("message").equals("done")) {
-                        Toast.makeText(getActivity(), "Payment mode added", Toast.LENGTH_LONG).show();
-
-                        etName.setText("");
-
-                        loadPaymentModes();
-                    } else if (obj.getString("message").equals("duplicate"))
-                        Toast.makeText(getActivity(), "Duplicate payment mode", Toast.LENGTH_LONG).show();
-                    else
-                        Toast.makeText(getActivity(), "Invalid data", Toast.LENGTH_LONG).show();
-
-                } catch (JSONException e) {
-                    Toast.makeText(getActivity(), "Invalid data", Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-                }
-            }
-
-            // When the response returned by REST has Http response code other than '200'
-            @Override
-            public void onFailure(int statusCode, Throwable error,
-                                  String content) {
-                // When Http response code is '404'
-                if (statusCode == 404) {
-                    Toast.makeText(getActivity(), "Requested resource not found", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code is '500'
-                else if (statusCode == 500) {
-                    Toast.makeText(getActivity(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code other than 404, 500
-                else {
-                    Toast.makeText(getActivity(), "Cannot connect to server", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+        paymentModeService.addPaymentMode(name, FragmentPayment.this);
     }
 
-    private void loadPaymentModes() {
+    public void paymentModeAdded(String message) {
 
-        final RequestParams params = new RequestParams();
+        if (message.equals("done")) {
+            Toast.makeText(getActivity(), "Payment mode added", Toast.LENGTH_LONG).show();
 
-        params.put("customer_id", Utility.customerId);
+            etName.setText("");
 
-        AsyncHttpClient client = new AsyncHttpClient();
-
-        client.get(Utility.server + "/all-payment-modes", params, new AsyncHttpResponseHandler() {
-            // When the response returned by REST has Http response code '200'
-            @Override
-            public void onSuccess(String response) {
-
-                paymentModes.clear();
-
-                try {
-                    JSONObject obj = new JSONObject(response);
-                    if (obj.getString("message").equals("found")) {
-
-                        JSONArray paymentModesArray = obj.getJSONArray("paymentModes");
-
-                        PaymentMode paymentMode = new PaymentMode();
-
-                        paymentMode.setId(-1);
-                        paymentMode.setName("Cash");
-
-                        paymentModes.add(paymentMode);
-
-                        for (int i = 0; i < paymentModesArray.length(); i++) {
-                            JSONObject paymentModeJSON = paymentModesArray.getJSONObject(i);
-
-                            paymentMode = new PaymentMode();
-
-                            paymentMode.setId(paymentModeJSON.getInt("id"));
-                            paymentMode.setName(paymentModeJSON.getString("name"));
-
-                            paymentModes.add(paymentMode);
-                        }
-
-                        adapter.notifyDataSetChanged();
-
-                    } else if (obj.getString("message").equals("empty")) {
-                        PaymentMode paymentMode = new PaymentMode();
-
-                        paymentMode.setId(-1);
-                        paymentMode.setName("Cash");
-
-                        paymentModes.add(paymentMode);
-
-                        adapter.notifyDataSetChanged();
-                    } else {
-                        Toast.makeText(getActivity(), "Invalid data", Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    Toast.makeText(getActivity(), "Error Occured [Server's JSON response might be invalid]!", Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-                }
-            }
-
-            // When the response returned by REST has Http response code other than '200'
-            @Override
-            public void onFailure(int statusCode, Throwable error,
-                                  String content) {
-                // When Http response code is '404'
-                if (statusCode == 404) {
-                    Toast.makeText(getActivity(), "Requested resource not found", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code is '500'
-                else if (statusCode == 500) {
-                    Toast.makeText(getActivity(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code other than 404, 500
-                else {
-                    Toast.makeText(getActivity(), "Unexpected Error occcured! [Most common Error: Device might not be connected to Internet or remote server is not up and running]", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
-    }
-
-    public void removePaymentMode(int paymentModeId) {
-
-        RequestParams params = new RequestParams();
-
-        params.put("id", String.valueOf(paymentModeId));
-
-        AsyncHttpClient client = new AsyncHttpClient();
-
-        client.post(Utility.server + "/remove-payment-mode", params, new AsyncHttpResponseHandler() {
-            // When the response returned by REST has Http response code '200'
-            @Override
-            public void onSuccess(String response) {
-
-                try {
-                    JSONObject obj = new JSONObject(response);
-                    if (obj.getString("message").equals("done")) {
-                        Toast.makeText(getActivity(), "Payment mode removed", Toast.LENGTH_LONG).show();
-
-                        loadPaymentModes();
-                    } else
-                        Toast.makeText(getActivity(), "Invalid data", Toast.LENGTH_LONG).show();
-
-                } catch (JSONException e) {
-                    Toast.makeText(getActivity(), "Cannot connect to server", Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-                }
-            }
-
-            // When the response returned by REST has Http response code other than '200'
-            @Override
-            public void onFailure(int statusCode, Throwable error,
-                                  String content) {
-                // When Http response code is '404'
-                if (statusCode == 404) {
-                    Toast.makeText(getActivity(), "Requested resource not found", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code is '500'
-                else if (statusCode == 500) {
-                    Toast.makeText(getActivity(), "Something went wrong at server end", Toast.LENGTH_LONG).show();
-                }
-                // When Http response code other than 404, 500
-                else {
-                    Toast.makeText(getActivity(), "Cannot connect to server", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+            paymentModeService.loadPaymentModes(FragmentPayment.this, paymentModes);
+        }
+        else if (message.equals("duplicate"))
+            Toast.makeText(getActivity(), "Duplicate payment mode", Toast.LENGTH_LONG).show();
+        else
+            Toast.makeText(getActivity(), "Invalid data", Toast.LENGTH_LONG).show();
     }
 }
 

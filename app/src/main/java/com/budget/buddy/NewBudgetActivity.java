@@ -11,6 +11,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.budget.buddy.data.Utility;
+import com.budget.buddy.service.BudgetService;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -35,6 +36,8 @@ public class NewBudgetActivity extends Activity {
 
     private Button btnCreateBudget;
 
+    private BudgetService budgetService;
+
     final Calendar myCalendar = Calendar.getInstance();
 
     @Override
@@ -50,6 +53,8 @@ public class NewBudgetActivity extends Activity {
         btnCreateBudget = (Button)findViewById(R.id.btnCreateBudget);
 
         rdGroupDate = (RadioGroup)findViewById(R.id.rdGroupDate);
+
+        budgetService = new BudgetService();
 
         initializeEvents();
     }
@@ -185,8 +190,8 @@ public class NewBudgetActivity extends Activity {
                         etBudgetLimit.setText("");
                         rdGroupDate.check(R.id.rdBudgetTypeMonthly);
 
-                        Utility.loadBudgets();
-                        Utility.loadShares();
+                        budgetService.loadBudgets();
+                        budgetService.loadShares();
 
                     } else if (obj.getString("message").equals("duplicate")) {
                         Toast.makeText(getApplicationContext(), "Duplicate budget name", Toast.LENGTH_LONG).show();

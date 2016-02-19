@@ -10,7 +10,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.budget.buddy.BudgetHistoryActivity;
-import com.budget.buddy.MainActivity;
 import com.budget.buddy.data.Utility;
 import com.budget.buddy.pojo.Budget;
 import com.budget.buddy.pojo.BudgetHistory;
