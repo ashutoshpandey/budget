@@ -23,11 +23,13 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.budget.buddy.adapter.NavDrawerListAdapter;
+import com.budget.buddy.data.Utility;
 import com.budget.buddy.fragments.FragmentBudget;
 import com.budget.buddy.fragments.FragmentBudgetShare;
 import com.budget.buddy.fragments.FragmentCategory;
 import com.budget.buddy.fragments.FragmentDashboard;
 import com.budget.buddy.fragments.FragmentPayment;
+import com.budget.buddy.fragments.FragmentProfile;
 import com.budget.buddy.pojo.NavDrawerItem;
 import com.budget.buddy.service.BudgetService;
 import com.budget.buddy.service.CategoryService;
@@ -43,6 +45,9 @@ public class HomeActivity extends Activity {
     private Fragment fragmentBudgetShare;
     private Fragment fragmentCategory;
     private Fragment fragmentPayment;
+    private Fragment fragmentProfile;
+
+    private static HomeActivity self;
 
     private Timer timer;
     private BudgetTimerTask timerTask;
@@ -57,6 +62,7 @@ public class HomeActivity extends Activity {
 
     // slide menu items
     private String[] navMenuTitles;
+    private String[] fragmentTitles;
     private TypedArray navMenuIcons;
 
     private ArrayList<NavDrawerItem> navDrawerItems;
@@ -67,16 +73,21 @@ public class HomeActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        self = this;
+
         fragmentDashboard = new FragmentDashboard();
         fragmentBudget = new FragmentBudget();
         fragmentBudgetShare = new FragmentBudgetShare();
         fragmentCategory = new FragmentCategory();
         fragmentPayment = new FragmentPayment();
+        fragmentProfile = new FragmentProfile();
 
         mTitle = mDrawerTitle = getTitle();
 
         // load slide menu items
         navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
+
+        fragmentTitles = getResources().getStringArray(R.array.fragment_titles);
 
         // nav drawer icons from resources
         navMenuIcons = getResources()
@@ -139,34 +150,44 @@ public class HomeActivity extends Activity {
         loadCustomerBudgetSharesFromServer();
     }
 
+    public static HomeActivity me(){
+        return self;
+    }
+
     @Override
     public void onBackPressed() {
 
-        new AlertDialog.Builder(this)
-                .setMessage("Do you want to close the app?")
-                .setTitle("Close?")
-                .setPositiveButton(R.string.exit_yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+        if(Utility.currentDisplayView==0) {
 
-                        if(timer!=null){
-                            timer.cancel();
-                            timer = null;
-                            timerTask = null;
+            new AlertDialog.Builder(this)
+                    .setMessage("Do you want to close the app?")
+                    .setTitle("Close?")
+                    .setPositiveButton(R.string.exit_yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            if (timer != null) {
+                                timer.cancel();
+                                timer = null;
+                                timerTask = null;
+                            }
+
+                            Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+                            homeIntent.addCategory(Intent.CATEGORY_HOME);
+                            homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(homeIntent);
                         }
+                    })
+                    .setNeutralButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
 
-                        Intent homeIntent = new Intent(Intent.ACTION_MAIN);
-                        homeIntent.addCategory( Intent.CATEGORY_HOME );
-                        homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(homeIntent);
-                    }
-                })
-                .setNeutralButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                        }
+                    }).show();
 
-                    }
-                }).show();
+        }
+        else
+            displayView(0);
 
         return;
     }
@@ -212,14 +233,17 @@ public class HomeActivity extends Activity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         // if nav drawer is opened, hide the action items
         boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-        menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
+//        menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
 
     /**
      * Diplaying fragment view for selected nav drawer list item
      * */
-    private void displayView(int position) {
+    public void displayView(int position) {
+
+        Utility.currentDisplayView = position;
+
         // update the main content by replacing fragments
         Fragment fragment = null;
         switch (position) {
@@ -238,6 +262,9 @@ public class HomeActivity extends Activity {
             case 4:
                 fragment = fragmentPayment;
                 break;
+            case 5:
+                fragment = fragmentProfile;
+                break;
             default:
                 break;
         }
@@ -250,7 +277,7 @@ public class HomeActivity extends Activity {
             // update selected item and title, then close the drawer
             mDrawerList.setItemChecked(position, true);
             mDrawerList.setSelection(position);
-            setTitle(navMenuTitles[position]);
+            setTitle(fragmentTitles[position]);
             mDrawerLayout.closeDrawer(mDrawerList);
         } else {
             // error in creating fragment
@@ -323,7 +350,7 @@ public class HomeActivity extends Activity {
     }
 
     public void openSingleBudget() {
-        Intent i = new Intent(HomeActivity.this, SingleBudgetActivity.class);
+        Intent i = new Intent(HomeActivity.this, SingleBudgetDetailActivity.class);
         startActivity(i);
     }
 

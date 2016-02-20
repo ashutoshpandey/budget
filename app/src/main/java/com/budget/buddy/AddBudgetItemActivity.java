@@ -84,7 +84,13 @@ public class AddBudgetItemActivity extends Activity {
         spinnerPaymentModes.setAdapter(adapterPaymentMode);
 
         categoryService = new CategoryService();
-        categoryService.loadCategories();
+
+        if(Utility.currentBudgetType.equals("shared")) {
+            String customerId = Utility.budgetShares.get(Utility.currentSharedBudgetId).getCustomer().getId();
+            categoryService.loadCategories(customerId, categories);
+        }
+        else
+            ;
 
         loadPaymentModes(Utility.customerId);
 
@@ -276,7 +282,7 @@ public class AddBudgetItemActivity extends Activity {
             public void onFailure(int statusCode, Throwable error,
                                   String content) {
                 // When Http response code is '404'
-                System.out.println("Share status = " + statusCode);
+
                 if (statusCode == 404) {
                 }
                 // When Http response code is '500'

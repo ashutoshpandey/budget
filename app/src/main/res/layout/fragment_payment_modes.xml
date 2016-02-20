@@ -14,7 +14,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/etPaymentModeName"
-            android:hint="Name" />
+            android:hint="Name"
+            android:singleLine="false" />
 
         <Button
             android:layout_width="wrap_content"

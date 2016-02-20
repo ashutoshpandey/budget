@@ -35,6 +35,11 @@ public class FragmentPayment extends Fragment{
     private Button btnCreate;
     private EditText etName;
 
+    private static FragmentPayment selfObject;
+    public static FragmentPayment me(){
+        return selfObject;
+    }
+
     @Override
     public void onResume(){
         super.onResume();
@@ -47,6 +52,7 @@ public class FragmentPayment extends Fragment{
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_payment_modes, container, false);
 
+        selfObject = this;
 
         listView = (ListView)rootView.findViewById(R.id.lvPaymentModes);
 

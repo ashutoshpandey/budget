@@ -37,6 +37,8 @@ public class Utility {
     public static Map<Integer,Category> categories = new HashMap<Integer,Category>();
     public static Map<Integer,PaymentMode> paymentModes = new HashMap<Integer,PaymentMode>();
 
+    public static int currentDisplayView = 0;
+
     public static int lastTab = 0;
 
     static{
@@ -52,6 +54,18 @@ public class Utility {
             ex.printStackTrace();
         }
 */
+    }
+
+    public static Budget getCurrentBudget(){
+        if(currentBudgetType!=null){
+
+            if(currentBudgetType.equals("created"))
+                return Utility.budgets.get(Utility.currentBudgetId);
+            else
+                return Utility.budgetShares.get(Utility.currentSharedBudgetId).getBudget();
+        }
+        else
+            return null;
     }
 
     public static String getData(String key){

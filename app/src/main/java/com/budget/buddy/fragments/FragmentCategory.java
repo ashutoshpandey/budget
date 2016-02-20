@@ -86,6 +86,11 @@ public class FragmentCategory extends Fragment{
 
         String name = etName.getText().toString();
 
+        if(name.trim().length()==0){
+            Toast.makeText(getActivity(), "Please provide a name", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         params.put("customer_id", Utility.customer.getId());
         params.put("name", name);
 

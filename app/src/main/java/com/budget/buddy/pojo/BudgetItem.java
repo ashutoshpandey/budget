@@ -11,6 +11,8 @@ public class BudgetItem {
     private double price;
     private String name;
 
+    private String paymentMode;
+
     private String personName;
     private String categoryName;
     private String status;
@@ -96,5 +98,13 @@ public class BudgetItem {
 
     public void setPersonName(String personName) {
         this.personName = personName;
+    }
+
+    public String getPaymentMode() {
+        return paymentMode;
+    }
+
+    public void setPaymentMode(String paymentMode) {
+        this.paymentMode = paymentMode;
     }
 }

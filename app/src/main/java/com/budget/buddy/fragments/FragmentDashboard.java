@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.budget.buddy.HomeActivity;
 import com.budget.buddy.data.Utility;
 
 import com.budget.buddy.R;
@@ -22,7 +23,10 @@ public class FragmentDashboard extends Fragment{
     private TextView tvCountCategories;
     private TextView tvCountPaymentModes;
 
-    private PaymentModeService paymentModeService;
+    private TextView tvCountBudgetsLabel;
+    private TextView tvCountBudgetSharesLabel;
+    private TextView tvCountCategoriesLabel;
+    private TextView tvCountPaymentModesLabel;
 
     @Override
     public void onResume(){
@@ -44,14 +48,44 @@ public class FragmentDashboard extends Fragment{
         tvCountCategories = (TextView)rootView.findViewById(R.id.tvCountCategories);
         tvCountPaymentModes = (TextView)rootView.findViewById(R.id.tvCountPaymentModes);
 
+        tvCountBudgetsLabel = (TextView)rootView.findViewById(R.id.tvCountBudgetsLabel);
+        tvCountBudgetSharesLabel = (TextView)rootView.findViewById(R.id.tvCountBudgetSharesLabel);
+        tvCountCategoriesLabel = (TextView)rootView.findViewById(R.id.tvCountCategoriesLabel);
+        tvCountPaymentModesLabel = (TextView)rootView.findViewById(R.id.tvCountPaymentModesLabel);
+
         tvCountCategories.setText(String.valueOf(Utility.categoryCount));
-
-        paymentModeService = new PaymentModeService();
-        //paymentModeService.loadPaymentModes(FragmentPayment.this);
-
         tvCountPaymentModes.setText(String.valueOf(Utility.paymentModeCount));
 
+        initializeEvents();
+
         return rootView;
+    }
+
+    public void initializeEvents() {
+        tvCountBudgetsLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HomeActivity.me().displayView(1);
+            }
+        });
+        tvCountBudgetSharesLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HomeActivity.me().displayView(2);
+            }
+        });
+        tvCountCategoriesLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HomeActivity.me().displayView(3);
+            }
+        });
+        tvCountPaymentModesLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HomeActivity.me().displayView(4);
+            }
+        });
     }
 
     public void setBudgetCount(){

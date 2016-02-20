@@ -40,6 +40,17 @@
         <item >Sharings</item>
         <item >Categories</item>
         <item >Payment Modes</item>
+        <item >Profile</item>
+    </string-array>
+
+    <!-- Nav Drawer Menu Items -->
+    <string-array name="fragment_titles">
+        <item >Budget Buddy</item>
+        <item >Budgets</item>
+        <item >Sharings</item>
+        <item >Categories</item>
+        <item >Payment Modes</item>
+        <item >Profile</item>
     </string-array>
 
     <!-- Nav Drawer List Item Icons -->
@@ -51,6 +62,8 @@
             <item>@drawable/ic_communities</item>
             <item>@drawable/ic_pages</item>
             <item>@drawable/ic_whats_hot</item>
+            <item>@drawable/ic_whats_hot</item>
         </array>
+    <string name="title_activity_single_budget_detail">SingleBudgetDetailActivity</string>
 
     </resources>

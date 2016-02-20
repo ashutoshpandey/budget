@@ -23,24 +23,24 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
-            android:label="@string/title_activity_main" >
+            android:name=".HomeActivity"
+            android:label="@string/title_activity_home" >
         </activity>
         <activity
             android:name=".NewBudgetActivity"
             android:label="@string/title_activity_new_budget"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".HomeActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.budget.buddy.MainActivity" />
+                android:value="com.budget.buddy.HomeActivity" />
         </activity>
         <activity
             android:name=".SharesActivity"
             android:label="@string/title_activity_new_budget"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".HomeActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.budget.buddy.MainActivity" />
+                android:value="com.budget.buddy.HomeActivity" />
         </activity>
         <activity
             android:name=".WelcomeActivity"
@@ -57,10 +57,10 @@
         <activity
             android:name=".SingleBudgetActivity"
             android:label="@string/title_activity_single_budget"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".HomeActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.budget.buddy.MainActivity" />
+                android:value="com.budget.buddy.HomeActivity" />
         </activity>
         <activity
             android:name=".EditBudgetActivity"
@@ -68,7 +68,7 @@
             android:parentActivityName=".SingleBudgetActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.budget.buddy.MainActivity" />
+                android:value="com.budget.buddy.HomeActivity" />
         </activity>
         <activity
             android:name=".ShareBudgetActivity"
@@ -81,10 +81,10 @@
         <activity
             android:name=".ProfileActivity"
             android:label="@string/title_activity_profile"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".HomeActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.budget.buddy.MainActivity" />
+                android:value="com.budget.buddy.HomeActivity" />
         </activity>
         <activity
             android:name=".BudgetHistoryActivity"
@@ -103,23 +103,12 @@
                 android:value="com.budget.buddy.BudgetHistoryActivity" />
         </activity>
         <activity
-            android:name=".CategoryActivity"
-            android:label="@string/title_activity_category"
-            android:parentActivityName=".MainActivity" >
+            android:name=".SingleBudgetDetailActivity"
+            android:label="@string/title_activity_single_budget_detail"
+            android:parentActivityName=".HomeActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.budget.buddy.MainActivity" />
-        </activity>
-        <activity
-            android:name=".PaymentModeActivity"
-            android:label="@string/title_activity_payment_mode" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.budget.buddy.MainActivity" />
-        </activity>
-        <activity
-            android:name=".HomeActivity"
-            android:label="@string/title_activity_home" >
+                android:value="com.budget.buddy.HomeActivity" />
         </activity>
     </application>
 

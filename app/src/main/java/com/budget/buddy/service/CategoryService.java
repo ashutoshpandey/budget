@@ -1,7 +1,6 @@
 package com.budget.buddy.service;
 
 import com.budget.buddy.data.Utility;
-import com.budget.buddy.pojo.BudgetShare;
 import com.budget.buddy.pojo.Category;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -11,17 +10,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Ashutosh on 2/19/2016.
  */
 public class CategoryService {
 
-    public void loadCategories() {
+    public void loadCategories(String customerId, final Map<Integer, Category> categories) {
+
+        categories.clear();
 
         RequestParams params = new RequestParams();
-        params.put("customer_id", String.valueOf(Utility.customerId));
+        params.put("customer_id", customerId);
 
         AsyncHttpClient client = new AsyncHttpClient();
 
@@ -29,8 +30,6 @@ public class CategoryService {
             // When the response returned by REST has Http response code '200'
             @Override
             public void onSuccess(String response) {
-
-                HashMap<Integer, BudgetShare> budgetShares = new HashMap<Integer, BudgetShare>();
 
                 try {
                     JSONObject obj = new JSONObject(response);
@@ -45,7 +44,7 @@ public class CategoryService {
                             category.setId(budgetJSON.getInt("id"));
                             category.setName(budgetJSON.getString("name"));
 
-                            Utility.categories.put(category.getId(), category);
+                            categories.put(category.getId(), category);
                         }
 
                     } else if (obj.getString("message").equals("empty")) {
@@ -54,10 +53,8 @@ public class CategoryService {
                         category.setId(-1);
                         category.setName("no categories");
 
-                        Utility.categories.put(category.getId(), category);
+                        categories.put(category.getId(), category);
                     }
-
-                    Utility.categoryCount = Utility.categories.size();
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -69,7 +66,7 @@ public class CategoryService {
             public void onFailure(int statusCode, Throwable error,
                                   String content) {
                 // When Http response code is '404'
-                System.out.println("Share status = " + statusCode);
+
                 if (statusCode == 404) {
                 }
                 // When Http response code is '500'

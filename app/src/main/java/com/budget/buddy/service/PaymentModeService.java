@@ -31,7 +31,7 @@ public class PaymentModeService {
             // When the response returned by REST has Http response code '200'
             @Override
             public void onSuccess(String response) {
-System.out.println(response);
+
                 try {
                     JSONObject obj = new JSONObject(response);
                     if (obj.getString("message").equals("found")) {
@@ -89,7 +89,7 @@ System.out.println(response);
             public void onFailure(int statusCode, Throwable error,
                                   String content) {
                 // When Http response code is '404'
-                System.out.println("Share status = " + statusCode);
+
                 if (statusCode == 404) {
                 }
                 // When Http response code is '500'
@@ -119,6 +119,8 @@ System.out.println(response);
                     JSONObject obj = new JSONObject(response);
                     if (obj.getString("message").equals("done")) {
                         //Toast.makeText(getApplicationContext(), "Payment mode removed", Toast.LENGTH_LONG).show();
+
+                        FragmentPayment.me().loadPaymentModes();
 
                         //loadPaymentModes(FragmentPayment.this);
                     }

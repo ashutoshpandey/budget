@@ -1,7 +1,11 @@
 package com.budget.buddy.service;
 
+import android.widget.Toast;
+
+import com.budget.buddy.SingleBudgetDetailActivity;
 import com.budget.buddy.data.Utility;
 import com.budget.buddy.pojo.Budget;
+import com.budget.buddy.pojo.BudgetItem;
 import com.budget.buddy.pojo.BudgetShare;
 import com.budget.buddy.pojo.Customer;
 import com.loopj.android.http.AsyncHttpClient;
@@ -13,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -221,7 +226,7 @@ public class BudgetService {
             public void onFailure(int statusCode, Throwable error,
                                   String content) {
                 // When Http response code is '404'
-                System.out.println("Share status = " + statusCode);
+
                 if (statusCode == 404) {
                 }
                 // When Http response code is '500'
@@ -232,5 +237,150 @@ public class BudgetService {
                 }
             }
         });
+    }
+
+    public void removeBudgetItem(int id) {
+
+        final RequestParams params = new RequestParams();
+
+        params.put("item_id", String.valueOf(id));
+
+        AsyncHttpClient client = new AsyncHttpClient();
+
+        client.get(Utility.server + "/remove-item", params, new AsyncHttpResponseHandler() {
+            // When the response returned by REST has Http response code '200'
+            @Override
+            public void onSuccess(String response) {
+
+                try {
+                    JSONObject obj = new JSONObject(response);
+
+                    if(obj.has("message")) {
+                        System.out.println("Budget item removed");
+                        loadBudgetItems();
+                    }
+
+                } catch (JSONException e) {
+                    SingleBudgetDetailActivity.me().budgetItemRemoved("error");
+                }
+            }
+
+            // When the response returned by REST has Http response code other than '200'
+            @Override
+            public void onFailure(int statusCode, Throwable error,
+                                  String content) {
+                // When Http response code is '404'
+                if (statusCode == 404) {
+                    SingleBudgetDetailActivity.me().budgetItemRemoved("404");
+                }
+                // When Http response code is '500'
+                else if (statusCode == 500) {
+                    SingleBudgetDetailActivity.me().budgetItemRemoved("500");
+                }
+                // When Http response code other than 404, 500
+                else {
+                    SingleBudgetDetailActivity.me().budgetItemRemoved("connectivity");
+                }
+            }
+        });
+    }
+
+    public void loadBudgetItems() {
+
+        Calendar cal = Calendar.getInstance();
+
+        int month = cal.get(Calendar.MONTH);
+        int year = cal.get(Calendar.YEAR);
+
+        final String yearMonth = year + "," + month;
+
+        final int budgetId = Utility.getCurrentBudget().getId();
+
+        RequestParams params = new RequestParams();
+
+        params.put("budget_id", String.valueOf(budgetId));
+        params.put("yearMonth", yearMonth);
+
+        AsyncHttpClient client = new AsyncHttpClient();
+
+        client.get(Utility.server + "/all-budget-items-filtered", params, new AsyncHttpResponseHandler() {
+            // When the response returned by REST has Http response code '200'
+            @Override
+            public void onSuccess(String response) {
+
+                ArrayList<BudgetItem> budgetItems = new ArrayList<BudgetItem>();
+                try {
+                    JSONObject obj = new JSONObject(response);
+                    if (obj.getString("message").equals("found")) {
+
+                        JSONArray budgetSharesArray = obj.getJSONArray("budgetItems");
+
+                        double currentAmount = 0;
+
+                        budgetItems.clear();
+
+                        for (int i = 0; i < budgetSharesArray.length(); i++) {
+                            JSONObject budgetJSON = budgetSharesArray.getJSONObject(i);
+
+                            BudgetItem budgetItem = new BudgetItem();
+
+                            budgetItem.setId(budgetJSON.getInt("id"));
+                            budgetItem.setName(budgetJSON.getString("name"));
+                            budgetItem.setPrice(budgetJSON.getDouble("price"));
+                            budgetItem.setPaymentMode(budgetJSON.getString("payment_mode"));
+
+                            String createDate;
+                            try {
+                                createDate = new SimpleDateFormat("dd-MMM-yyyy").format(new SimpleDateFormat("yyyy-MM-dd").parse(budgetJSON.getString("entry_date")));
+                            }
+                            catch(Exception ex){
+                                createDate = budgetJSON.getString("entry_date");
+                            }
+                            budgetItem.setCreatedAt(createDate);
+
+                            JSONObject customerJSON = budgetJSON.getJSONObject("customer");
+                            budgetItem.setPersonName(customerJSON.getString("name"));
+
+                            if(budgetJSON.has("category") && !budgetJSON.isNull("category")) {
+                                JSONObject categoryJSON = budgetJSON.getJSONObject("category");
+                                budgetItem.setCategoryName(categoryJSON.getString("name"));
+                            }
+                            else
+                                budgetItem.setCategoryName("Uncategorized");
+
+                            currentAmount += budgetJSON.getDouble("price");
+
+                            budgetItems.add(budgetItem);
+                        }
+
+                        SingleBudgetDetailActivity.me().updateBudgetItems(budgetItems, currentAmount, "found");
+
+                    } else if (obj.getString("message").equals("empty")) {
+                        SingleBudgetDetailActivity.me().updateBudgetItems(budgetItems, 0, "found");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            // When the response returned by REST has Http response code other than '200'
+            @Override
+            public void onFailure(int statusCode, Throwable error,
+                                  String content) {
+                // When Http response code is '404'
+                if (statusCode == 404) {
+                    SingleBudgetDetailActivity.me().updateBudgetItems(null, 0, "error");
+                }
+                // When Http response code is '500'
+                else if (statusCode == 500) {
+                    SingleBudgetDetailActivity.me().updateBudgetItems(null, 0, "error");
+                }
+                // When Http response code other than 404, 500
+                else {
+                    SingleBudgetDetailActivity.me().updateBudgetItems(null, 0, "error");
+                }
+            }
+        });
+
     }
 }

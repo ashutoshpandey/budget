@@ -11,34 +11,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.budget.buddy.HomeActivity;
+import com.budget.buddy.R;
 import com.budget.buddy.SingleBudgetActivity;
 import com.budget.buddy.data.Utility;
+import com.budget.buddy.pojo.Budget;
 import com.budget.buddy.pojo.BudgetItem;
 
 import java.util.ArrayList;
 
-import com.budget.buddy.R;
-import com.budget.buddy.service.BudgetService;
-
 /**
  * Created by Ashutosh on 2/1/2016.
  */
-public class BudgetItemAdapter extends BaseAdapter{
+public class BudgetItemCategorizedAdapter extends BaseAdapter{
 
     private Activity activity;
     private ArrayList<BudgetItem> budgetItems;
     private static LayoutInflater inflater=null;
     public Resources res;
 
-    private BudgetService budgetService;
-
-    public BudgetItemAdapter(Activity activity, ArrayList<BudgetItem> budgetItems){
+    public BudgetItemCategorizedAdapter(Activity activity, ArrayList<BudgetItem> budgetItems){
         this.activity = activity;
         this.budgetItems = budgetItems;
-
-        budgetService = new BudgetService();
     }
 
     @Override
@@ -75,7 +70,6 @@ public class BudgetItemAdapter extends BaseAdapter{
         String name = budgetItem.getName();
 
         if(budgetItem.getId()==0){
-
             holder.itemName.setText(name);
             holder.itemName.setTextColor(Color.BLUE);
             holder.itemPriceDate.setVisibility(View.GONE);
@@ -85,7 +79,6 @@ public class BudgetItemAdapter extends BaseAdapter{
             name = name.substring(0, 1).toUpperCase() + name.substring(1);
 
             holder.itemName.setText(name);
-
             holder.itemPriceDate.setText(Utility.currency + " " + String.valueOf((int) budgetItems.get(position).getPrice()) + " On " + budgetItems.get(position).getCreatedAt());
             holder.personName.setText("By: " + budgetItems.get(position).getPersonName());
 
@@ -108,7 +101,7 @@ public class BudgetItemAdapter extends BaseAdapter{
                     });
                     alertDialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            budgetService.removeBudgetItem(budgetItemToRemove.getId());
+                            ((SingleBudgetActivity) activity).removeBudgetItem(budgetItemToRemove.getId());
                         }
                     });
 

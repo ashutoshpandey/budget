@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Budgets"
-            android:id="@+id/textView4"
+            android:id="@+id/tvCountBudgetsLabel"
             android:layout_weight="1"
             style="@style/countLabelStyle" />
     </TableRow>
@@ -46,7 +46,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Sharings"
-            android:id="@+id/textView41"
+            android:id="@+id/tvCountBudgetSharesLabel"
             android:layout_weight="1"
             style="@style/countLabelStyle" />
     </TableRow>
@@ -70,7 +70,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Categories"
-            android:id="@+id/textView42"
+            android:id="@+id/tvCountCategoriesLabel"
             android:layout_weight="1"
             style="@style/countLabelStyle" />
     </TableRow>
@@ -94,7 +94,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Payment Modes"
-            android:id="@+id/textView43"
+            android:id="@+id/tvCountPaymentModesLabel"
             android:layout_weight="1"
             style="@style/countLabelStyle" />
     </TableRow>

@@ -89,6 +89,7 @@ public class BudgetShareAdapter extends BaseAdapter{
 
                     Utility.currentBudgetType = "shared";
                     Utility.currentSharedBudgetId = rowTag;
+
                     ((HomeActivity) activity).openSingleBudget();
                 }
             });
