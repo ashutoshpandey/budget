@@ -52,6 +52,8 @@ public class HomeActivity extends Activity {
     private Timer timer;
     private BudgetTimerTask timerTask;
 
+    private Menu mainMenu;
+
     private BudgetService budgetService;
 
     // nav drawer title
@@ -207,7 +209,9 @@ public class HomeActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.home, menu);
+        mainMenu = menu;
+        mainMenu.findItem(R.id.action_create_new_budget).setVisible(false);
         return true;
     }
 
@@ -219,7 +223,9 @@ public class HomeActivity extends Activity {
         }
         // Handle action bar actions click
         switch (item.getItemId()) {
-            case R.id.action_settings:
+            case R.id.action_create_new_budget:
+                Intent i = new Intent(HomeActivity.this, NewBudgetActivity.class);
+                startActivity(i);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -244,6 +250,9 @@ public class HomeActivity extends Activity {
 
         Utility.currentDisplayView = position;
 
+        if(mainMenu!=null && mainMenu.findItem(R.id.action_create_new_budget)!=null)
+            mainMenu.findItem(R.id.action_create_new_budget).setVisible(false);
+
         // update the main content by replacing fragments
         Fragment fragment = null;
         switch (position) {
@@ -252,6 +261,10 @@ public class HomeActivity extends Activity {
                 break;
             case 1:
                 fragment = fragmentBudget;
+
+                if(mainMenu!=null && mainMenu.findItem(R.id.action_create_new_budget)!=null)
+                    mainMenu.findItem(R.id.action_create_new_budget).setVisible(true);
+
                 break;
             case 2:
                 fragment = fragmentBudgetShare;
