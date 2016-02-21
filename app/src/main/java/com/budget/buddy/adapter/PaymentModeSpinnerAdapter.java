@@ -60,60 +60,13 @@ public class PaymentModeSpinnerAdapter extends ArrayAdapter<PaymentMode>{
         }
         else
         {
-            label.setText(paymentMode.getName());
-/*
-            row.setTag(paymentMode.getId());
+            String name = paymentMode.getName();
+            name = name.substring(0,1).toUpperCase() + name.substring(1);
 
-            rowView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    final int paymentModeId = Integer.parseInt(v.getTag().toString());
-
-                    return true;
-                }
-            });
-*/
+            label.setText(name);
         }
 
         return row;
-    }
-
-    public View getView1(int position, View convertView, ViewGroup parent) {
-
-        inflater = ( LayoutInflater )activity.
-                getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        ViewHolder holder=new ViewHolder();
-        View rowView;
-        rowView = inflater.inflate(R.layout.payment_mode_list, null);
-
-        holder.name=(TextView) rowView.findViewById(R.id.tvPaymentMode);
-
-        PaymentMode paymentMode = paymentModes.get(position);
-
-        String name = paymentMode.getName().toLowerCase();
-
-        if(name.equals("no paymentModes")) {
-            holder.name.setText("Uncategorized");
-            rowView.setTag(0);
-        }
-        else{
-            name = name.substring(0, 1).toUpperCase() + name.substring(1);
-
-            holder.name.setText(name);
-
-            rowView.setTag(paymentMode.getId());
-
-            rowView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    final int paymentModeId = Integer.parseInt(v.getTag().toString());
-
-                    return true;
-                }
-            });
-        }
-        return rowView;
     }
 
     public static class ViewHolder{

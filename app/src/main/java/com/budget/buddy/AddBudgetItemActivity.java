@@ -2,7 +2,6 @@ package com.budget.buddy;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
@@ -16,7 +15,6 @@ import android.widget.Toast;
 import com.budget.buddy.adapter.CategorySpinnerAdapter;
 import com.budget.buddy.adapter.PaymentModeSpinnerAdapter;
 import com.budget.buddy.data.Utility;
-import com.budget.buddy.pojo.BudgetShare;
 import com.budget.buddy.pojo.Category;
 import com.budget.buddy.pojo.PaymentMode;
 import com.budget.buddy.service.CategoryService;
@@ -42,25 +40,15 @@ public class AddBudgetItemActivity extends Activity {
 
     private Button btnAddItem;
 
-    private DialogFragment dateFragment;
-
-    private CategoryService categoryService;
-
-    private Calendar mCalendar;
-
-    private Spinner spinner;
+    private Spinner spinnerCategories;
     private Spinner spinnerPaymentModes;
 
     private ArrayList<Category> listCategories = new ArrayList<>();
 
     private ArrayList<PaymentMode> listPaymentModes = new ArrayList<>();
 
-    public static Map<Integer,Category> categories = new HashMap<Integer,Category>();
-
-    private CategorySpinnerAdapter adapter;
+    private CategorySpinnerAdapter adapterCategory;
     private PaymentModeSpinnerAdapter adapterPaymentMode;
-
-    private static final String DATE_FORMAT = "yyyy-MM-dd";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,25 +61,17 @@ public class AddBudgetItemActivity extends Activity {
 
         btnAddItem = (Button)findViewById(R.id.btnAddItem);
 
-        spinner = (Spinner)findViewById(R.id.spinCategories);
+        spinnerCategories = (Spinner)findViewById(R.id.spinCategories);
         spinnerPaymentModes = (Spinner)findViewById(R.id.spinPaymentModes);
 
-        adapter = new CategorySpinnerAdapter(this, listCategories);
+        adapterCategory = new CategorySpinnerAdapter(this, listCategories);
         adapterPaymentMode = new PaymentModeSpinnerAdapter(this, listPaymentModes);
 
-        // Assign adapter to ListView
-        spinner.setAdapter(adapter);
+        // Assign adapterCategory to ListView
+        spinnerCategories.setAdapter(adapterCategory);
         spinnerPaymentModes.setAdapter(adapterPaymentMode);
 
-        categoryService = new CategoryService();
-
-        if(Utility.currentBudgetType.equals("shared")) {
-            String customerId = Utility.budgetShares.get(Utility.currentSharedBudgetId).getCustomer().getId();
-            categoryService.loadCategories(customerId, categories);
-        }
-        else
-            ;
-
+        loadCategories(String.valueOf(Utility.getCurrentBudget().getCustomerId()));
         loadPaymentModes(Utility.customerId);
 
         initializeEvents();
@@ -99,10 +79,7 @@ public class AddBudgetItemActivity extends Activity {
 
     private void initializeEvents() {
 
-        if(Utility.currentBudgetType.equals("created"))
-            loadCategories(Utility.budgets.get(Utility.currentBudgetId).getCustomerId());
-        else
-            loadCategories(Utility.budgetShares.get(Utility.currentSharedBudgetId).getBudget().getCustomerId());
+        loadCategories(String.valueOf(Utility.getCurrentBudget().getCustomerId()));
 
         btnAddItem.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,7 +144,22 @@ public class AddBudgetItemActivity extends Activity {
         String date = etDate.getText().toString();
         String paymentMode = listPaymentModes.get(spinnerPaymentModes.getSelectedItemPosition()).getName();
 
-        int categoryId = listPaymentModes.get(spinner.getSelectedItemPosition()).getId();
+        if(name.trim().length()==0){
+            Toast.makeText(getApplicationContext(), "Please enter name", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(price.trim().length()==0){
+            Toast.makeText(getApplicationContext(), "Please enter price", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(date.trim().length()==0){
+            Toast.makeText(getApplicationContext(), "Please enter date", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        int categoryId = listCategories.get(spinnerCategories.getSelectedItemPosition()).getId();
 
         if(Utility.currentBudgetType.equals("created"))
             params.put("budget_id", String.valueOf(Utility.currentBudgetId));
@@ -196,6 +188,8 @@ public class AddBudgetItemActivity extends Activity {
                         etName.setText("");
                         etPrice.setText("");
                         etDate.setText("");
+
+                        SingleBudgetDetailActivity.me().loadBudgetItems();
 
                     } else {
                         Toast.makeText(getApplicationContext(), "Invalid data", Toast.LENGTH_LONG).show();
@@ -226,10 +220,10 @@ public class AddBudgetItemActivity extends Activity {
         });
     }
 
-    public void loadCategories(int customerId) {
+    public void loadCategories(String customerId) {
 
         RequestParams params = new RequestParams();
-        params.put("customer_id", String.valueOf(customerId));
+        params.put("customer_id", customerId);
 
         AsyncHttpClient client = new AsyncHttpClient();
 
@@ -238,7 +232,7 @@ public class AddBudgetItemActivity extends Activity {
             @Override
             public void onSuccess(String response) {
 
-                categories.clear();
+                listCategories.clear();
 
                 try {
                     JSONObject obj = new JSONObject(response);
@@ -253,7 +247,7 @@ public class AddBudgetItemActivity extends Activity {
                             category.setId(budgetJSON.getInt("id"));
                             category.setName(budgetJSON.getString("name"));
 
-                            categories.put(category.getId(), category);
+                            listCategories.add(category);
                         }
 
                     } else if (obj.getString("message").equals("empty")) {
@@ -262,15 +256,10 @@ public class AddBudgetItemActivity extends Activity {
                         category.setId(-1);
                         category.setName("no categories");
 
-                        categories.put(category.getId(), category);
+                        listCategories.add(category);
                     }
 
-                    listCategories.clear();
-
-                    for (Map.Entry<Integer, Category> entry : categories.entrySet())
-                        listCategories.add(entry.getValue());
-
-                    adapter.notifyDataSetChanged();
+                    adapterCategory.notifyDataSetChanged();
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -309,6 +298,9 @@ public class AddBudgetItemActivity extends Activity {
 
                 try {
                     JSONObject obj = new JSONObject(response);
+
+                    listPaymentModes.clear();
+
                     if (obj.getString("message").equals("found")) {
 
                         JSONArray paymentModesArray = obj.getJSONArray("paymentModes");

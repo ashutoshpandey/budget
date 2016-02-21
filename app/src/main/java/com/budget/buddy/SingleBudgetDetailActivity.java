@@ -94,7 +94,7 @@ public class SingleBudgetDetailActivity extends Activity {
         budgetService.loadBudgetItems();
     }
 
-    public void updateBudgetItems(ArrayList<BudgetItem> budgetItems, double currentAmount, String message){
+    public void updateBudgetItems(ArrayList<BudgetItem> budgetItems, String message){
 
         if(message.equals("found")) {
             this.budgetItems = budgetItems;
@@ -106,13 +106,7 @@ public class SingleBudgetDetailActivity extends Activity {
 
             ((FragmentBudgetPayment) fragmentBudgetPayment).setBudgetItems(budgetItems);
 
-            Budget budget;
-            if(Utility.currentBudgetType.equals("created"))
-                budget = Utility.budgets.get(Utility.currentBudgetId);
-            else
-                budget = Utility.budgetShares.get(Utility.currentSharedBudgetId).getBudget();
-
-            ((FragmentBudgetDashboard) fragmentBudgetDashboard).setData(budget.getName(), budget.getDuration(), currentAmount, budget.getMaxAmount());
+            ((FragmentBudgetDashboard) fragmentBudgetDashboard).refreshDashboard();
         }
         else
             Toast.makeText(getApplicationContext(), "Cannot load items", Toast.LENGTH_LONG).show();

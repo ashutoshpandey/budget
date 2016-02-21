@@ -40,6 +40,7 @@ public class Utility {
     public static int currentDisplayView = 0;
 
     public static int lastTab = 0;
+    public static double currentBudgetCurrentAmount;
 
     static{
 /*

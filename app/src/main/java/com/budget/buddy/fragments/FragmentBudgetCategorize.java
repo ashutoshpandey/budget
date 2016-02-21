@@ -61,6 +61,10 @@ public class FragmentBudgetCategorize extends Fragment{
         for(BudgetItem budgetItem : budgetItemsPassed)
             budgetItems.add(budgetItem);
 
+        int customerId = Utility.getCurrentBudget().getCustomerId();
+        loadCategories(customerId);
+/*
+
         if(Utility.currentBudgetType.equals("shared")) {
             int customerId = Utility.budgetShares.get(Utility.currentSharedBudgetId).getBudget().getCustomerId();
             loadCategories(customerId);
@@ -73,6 +77,7 @@ public class FragmentBudgetCategorize extends Fragment{
 
             categorizeBudgetItems();
         }
+*/
     }
 
     public void categorizeBudgetItems() {
@@ -106,7 +111,7 @@ public class FragmentBudgetCategorize extends Fragment{
             // represents name of category
             BudgetItem item = new BudgetItem();
             item.setId(0);
-            item.setName("Category : " + modifiedCategoryName + " [ " + Utility.currency + " " + entry.getValue().getAmount() + " ]");
+            item.setName(modifiedCategoryName + " [ " + Utility.currency + " " + entry.getValue().getAmount() + " ]");
 
             budgetItemsToShow.add(item);
 

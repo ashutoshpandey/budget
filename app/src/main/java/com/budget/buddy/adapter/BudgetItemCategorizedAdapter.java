@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.budget.buddy.HomeActivity;
 import com.budget.buddy.R;
@@ -18,6 +19,7 @@ import com.budget.buddy.SingleBudgetActivity;
 import com.budget.buddy.data.Utility;
 import com.budget.buddy.pojo.Budget;
 import com.budget.buddy.pojo.BudgetItem;
+import com.budget.buddy.service.BudgetService;
 
 import java.util.ArrayList;
 
@@ -31,9 +33,13 @@ public class BudgetItemCategorizedAdapter extends BaseAdapter{
     private static LayoutInflater inflater=null;
     public Resources res;
 
+    private BudgetService budgetService;
+
     public BudgetItemCategorizedAdapter(Activity activity, ArrayList<BudgetItem> budgetItems){
         this.activity = activity;
         this.budgetItems = budgetItems;
+
+        budgetService = new BudgetService();
     }
 
     @Override
@@ -92,6 +98,11 @@ public class BudgetItemCategorizedAdapter extends BaseAdapter{
 
                     final BudgetItem budgetItemToRemove = budgetItems.get(position);
 
+                    if(budgetItemToRemove.getCustomerId()!=Integer.parseInt(Utility.customerId)) {
+                        Toast.makeText(activity, "Cannot remove, not created by you", Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity);
                     alertDialog.setTitle("Delete?");
                     alertDialog.setMessage("Delete this item?");
@@ -101,7 +112,7 @@ public class BudgetItemCategorizedAdapter extends BaseAdapter{
                     });
                     alertDialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            ((SingleBudgetActivity) activity).removeBudgetItem(budgetItemToRemove.getId());
+                            budgetService.removeBudgetItem(budgetItemToRemove.getId());
                         }
                     });
 

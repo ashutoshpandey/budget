@@ -90,6 +90,9 @@ public class FragmentDashboard extends Fragment{
 
     public void setBudgetCount(){
 
+        if(tvCountBudgets==null)
+            return;
+
         if(Utility.budgets==null || Utility.budgets.size()==0 || (Utility.budgets.containsKey(-1) && Utility.budgets.get(-1).getName().equals("no budgets")))
             tvCountBudgets.setText("0");
         else
@@ -98,6 +101,9 @@ public class FragmentDashboard extends Fragment{
 
     public void setBudgetShareCount(){
 
+        if(tvCountBudgetShares==null)
+            return;
+
         if(Utility.budgetShares==null || Utility.budgetShares.size()==0 || (Utility.budgetShares.containsKey(-1) && Utility.budgetShares.get(-1).getText().equals("no shares")))
             tvCountBudgetShares.setText("0");
         else
@@ -105,10 +111,18 @@ public class FragmentDashboard extends Fragment{
     }
 
     public void setCategoryCount(){
-        tvCountPaymentModes.setText(String.valueOf(Utility.categoryCount));
+
+        if(tvCountCategories==null)
+            return;
+
+        tvCountCategories.setText(String.valueOf(Utility.categoryCount));
     }
 
     public void setPaymentModeCount(){
+
+        if(tvCountPaymentModes==null)
+            return;
+
         tvCountPaymentModes.setText(String.valueOf(Utility.paymentModeCount));
     }
 }

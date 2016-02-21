@@ -11,11 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.budget.buddy.R;
 import com.budget.buddy.SingleBudgetActivity;
 import com.budget.buddy.data.Utility;
 import com.budget.buddy.pojo.BudgetItem;
+import com.budget.buddy.service.BudgetService;
 
 import java.util.ArrayList;
 
@@ -29,9 +31,13 @@ public class BudgetItemPaymentAdapter extends BaseAdapter{
     private static LayoutInflater inflater=null;
     public Resources res;
 
+    private BudgetService budgetService;
+
     public BudgetItemPaymentAdapter(Activity activity, ArrayList<BudgetItem> budgetItems){
         this.activity = activity;
         this.budgetItems = budgetItems;
+
+        budgetService = new BudgetService();
     }
 
     @Override
@@ -81,6 +87,38 @@ public class BudgetItemPaymentAdapter extends BaseAdapter{
             holder.personName.setText("By: " + budgetItems.get(position).getPersonName());
 
             rowView.setTag(position);
+
+            rowView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+
+                    int position = Integer.parseInt(view.getTag().toString());
+
+                    final BudgetItem budgetItemToRemove = budgetItems.get(position);
+
+                    if(budgetItemToRemove.getCustomerId()!=Integer.parseInt(Utility.customerId)) {
+                        Toast.makeText(activity, "Cannot remove, not created by you", Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                    
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity);
+                    alertDialog.setTitle("Delete?");
+                    alertDialog.setMessage("Delete this item?");
+                    alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    alertDialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            budgetService.removeBudgetItem(budgetItemToRemove.getId());
+                        }
+                    });
+
+                    alertDialog.show();
+
+                    return true;
+                }
+            });
         }
 
         return rowView;

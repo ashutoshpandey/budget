@@ -102,7 +102,7 @@ public class FragmentBudgetPayment extends Fragment{
             // represents name of category
             BudgetItem item = new BudgetItem();
             item.setId(0);
-            item.setName("PaymentMode : " + modifiedPaymentModeName + " [ " + Utility.currency + " " + entry.getValue().getAmount() + " ]");
+            item.setName(modifiedPaymentModeName + " [ " + Utility.currency + " " + entry.getValue().getAmount() + " ]");
 
             budgetItemsToShow.add(item);
 

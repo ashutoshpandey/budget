@@ -18,12 +18,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/imgViewAddItem"
+                    android:src="@drawable/new_entry"
+                    android:layout_gravity="left" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:id="@+id/tvBudgetName"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:text=" " />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -101,18 +115,24 @@
                     android:layout_weight="1" />
             </TableRow>
 
-        </TableLayout>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="30dp">
 
-        <ListView
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/listView"
-            android:paddingLeft="0dp"
-            android:paddingRight="0dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="0dp"
-            android:visibility="gone"
-            android:longClickable="true" />
+
+                <ListView
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/listView"
+                    android:paddingLeft="0dp"
+                    android:paddingRight="0dp"
+                    android:visibility="gone"
+                    android:longClickable="false" />
+
+                </TableRow>
+
+        </TableLayout>
 
     </LinearLayout>
 

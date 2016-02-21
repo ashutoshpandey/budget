@@ -328,6 +328,7 @@ public class BudgetService {
                             budgetItem.setName(budgetJSON.getString("name"));
                             budgetItem.setPrice(budgetJSON.getDouble("price"));
                             budgetItem.setPaymentMode(budgetJSON.getString("payment_mode"));
+                            budgetItem.setCustomerId(budgetJSON.getInt("customer_id"));
 
                             String createDate;
                             try {
@@ -336,6 +337,7 @@ public class BudgetService {
                             catch(Exception ex){
                                 createDate = budgetJSON.getString("entry_date");
                             }
+
                             budgetItem.setCreatedAt(createDate);
 
                             JSONObject customerJSON = budgetJSON.getJSONObject("customer");
@@ -353,11 +355,21 @@ public class BudgetService {
                             budgetItems.add(budgetItem);
                         }
 
-                        SingleBudgetDetailActivity.me().updateBudgetItems(budgetItems, currentAmount, "found");
-
-                    } else if (obj.getString("message").equals("empty")) {
-                        SingleBudgetDetailActivity.me().updateBudgetItems(budgetItems, 0, "found");
+                        Utility.currentBudgetCurrentAmount = currentAmount;
                     }
+                    else if (obj.getString("message").equals("empty")) {
+                        Utility.currentBudgetCurrentAmount = 0;
+
+                        BudgetItem budgetItem = new BudgetItem();
+
+                        budgetItem.setId(-1);
+                        budgetItem.setName("No items added");
+
+                        budgetItems.add(budgetItem);
+                    }
+
+                    SingleBudgetDetailActivity.me().updateBudgetItems(budgetItems, "found");
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -369,15 +381,15 @@ public class BudgetService {
                                   String content) {
                 // When Http response code is '404'
                 if (statusCode == 404) {
-                    SingleBudgetDetailActivity.me().updateBudgetItems(null, 0, "error");
+                    SingleBudgetDetailActivity.me().updateBudgetItems(null, "error");
                 }
                 // When Http response code is '500'
                 else if (statusCode == 500) {
-                    SingleBudgetDetailActivity.me().updateBudgetItems(null, 0, "error");
+                    SingleBudgetDetailActivity.me().updateBudgetItems(null, "error");
                 }
                 // When Http response code other than 404, 500
                 else {
-                    SingleBudgetDetailActivity.me().updateBudgetItems(null, 0, "error");
+                    SingleBudgetDetailActivity.me().updateBudgetItems(null, "error");
                 }
             }
         });

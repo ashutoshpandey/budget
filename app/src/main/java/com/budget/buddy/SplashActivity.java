@@ -144,12 +144,11 @@ public class SplashActivity extends Activity {
                         String status = customer.getString("status");
                         String createdAt = customer.getString("created_at");
 
-                        Utility.paymentModeCount = obj.getInt("payment_mode_count");
+                        Utility.paymentModeCount = obj.getInt("payment_mode_count")+1;
                         Utility.categoryCount = obj.getInt("category_count");
 
                         Utility.customer = new Customer(id, name, phone, photo, status, createdAt);
 
-                        //Intent i = new Intent(SplashActivity.this, MainActivity.class);
                         Intent i = new Intent(SplashActivity.this, HomeActivity.class);
                         startActivity(i);
                     }

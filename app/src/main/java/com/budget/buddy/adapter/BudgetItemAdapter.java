@@ -99,6 +99,11 @@ public class BudgetItemAdapter extends BaseAdapter{
 
                     final BudgetItem budgetItemToRemove = budgetItems.get(position);
 
+                    if(budgetItemToRemove.getCustomerId()!=Integer.parseInt(Utility.customerId)) {
+                        Toast.makeText(activity, "Cannot remove, not created by you", Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity);
                     alertDialog.setTitle("Delete?");
                     alertDialog.setMessage("Delete this item?");
