@@ -83,8 +83,18 @@ public class BudgetItemPaymentAdapter extends BaseAdapter{
             name = name.substring(0, 1).toUpperCase() + name.substring(1);
 
             holder.itemName.setText(name);
-            holder.itemPriceDate.setText(Utility.currency + " " + String.valueOf((int) budgetItems.get(position).getPrice()) + " On " + budgetItems.get(position).getCreatedAt());
-            holder.personName.setText("By: " + budgetItems.get(position).getPersonName());
+
+            if(budgetItem.getId()==-1){
+                holder.itemPriceDate.setText("");
+                holder.personName.setText("");
+                holder.itemPriceDate.setVisibility(View.GONE);
+                holder.personName.setVisibility(View.GONE);
+            }
+            else {
+
+                holder.itemPriceDate.setText(Utility.currency + " " + String.valueOf((int) budgetItems.get(position).getPrice()) + " On " + budgetItems.get(position).getCreatedAt());
+                holder.personName.setText("By: " + budgetItems.get(position).getPersonName());
+            }
 
             rowView.setTag(position);
 
@@ -95,6 +105,10 @@ public class BudgetItemPaymentAdapter extends BaseAdapter{
                     int position = Integer.parseInt(view.getTag().toString());
 
                     final BudgetItem budgetItemToRemove = budgetItems.get(position);
+
+                    if(budgetItemToRemove.getId()==-1) {
+                        return true;
+                    }
 
                     if(budgetItemToRemove.getCustomerId()!=Integer.parseInt(Utility.customerId)) {
                         Toast.makeText(activity, "Cannot remove, not created by you", Toast.LENGTH_SHORT).show();

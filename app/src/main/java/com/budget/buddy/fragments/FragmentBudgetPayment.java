@@ -73,6 +73,13 @@ public class FragmentBudgetPayment extends Fragment{
 
     public void groupBudgetItemsByPayments() {
 
+        if(budgetItems.size()==1 && budgetItems.get(0).getName().equals("No items added")){
+            budgetItemsToShow.add(budgetItems.get(0));
+            if(adapter!=null)
+                adapter.notifyDataSetChanged();
+            return;
+        }
+
         budgetItemsToShow.clear();
 
         // get budget items mapped to category names
@@ -89,7 +96,6 @@ public class FragmentBudgetPayment extends Fragment{
                 map.put(name, amountItems);
         }
 
-        //ArrayList<BudgetItem> budgetItemsCategorized = getBudgetItems("uncategorized");
         AmountItemList amountItems = getAmountItems("uncategorized");
         if (amountItems != null && !amountItems.getItems().isEmpty())
             map.put("uncategorized",amountItems);

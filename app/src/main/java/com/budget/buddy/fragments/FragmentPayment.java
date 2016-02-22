@@ -102,6 +102,11 @@ public class FragmentPayment extends Fragment{
             return;
         }
 
+        if(name.trim().toLowerCase().equals("cash")){
+            Toast.makeText(getActivity(), "Payment mode already exists", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         paymentModeService.addPaymentMode(name, FragmentPayment.this);
     }
 

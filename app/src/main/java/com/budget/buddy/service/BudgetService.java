@@ -2,6 +2,7 @@ package com.budget.buddy.service;
 
 import android.widget.Toast;
 
+import com.budget.buddy.HomeActivity;
 import com.budget.buddy.SingleBudgetDetailActivity;
 import com.budget.buddy.data.Utility;
 import com.budget.buddy.pojo.Budget;
@@ -210,9 +211,10 @@ public class BudgetService {
 
                         budgetShares.put(budgetShare.getId(), budgetShare);
 
-                        Utility.budgetShares = Utility.budgetShares;
-
+                        Utility.budgetShares = budgetShares;
                     }
+
+                    HomeActivity.me().refreshShares();
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -256,7 +258,6 @@ public class BudgetService {
                     JSONObject obj = new JSONObject(response);
 
                     if(obj.has("message")) {
-                        System.out.println("Budget item removed");
                         loadBudgetItems();
                     }
 
@@ -394,5 +395,92 @@ public class BudgetService {
             }
         });
 
+    }
+
+    public void removeBudget(int id) {
+
+        final RequestParams params = new RequestParams();
+
+        params.put("item_id", String.valueOf(id));
+
+        AsyncHttpClient client = new AsyncHttpClient();
+
+        client.get(Utility.server + "/remove-budget", params, new AsyncHttpResponseHandler() {
+            // When the response returned by REST has Http response code '200'
+            @Override
+            public void onSuccess(String response) {
+
+                try {
+                    JSONObject obj = new JSONObject(response);
+
+                    if(obj.has("message")) {
+                        loadBudgets();
+                    }
+
+                } catch (JSONException e) {
+                    SingleBudgetDetailActivity.me().budgetItemRemoved("error");
+                }
+            }
+
+            // When the response returned by REST has Http response code other than '200'
+            @Override
+            public void onFailure(int statusCode, Throwable error,
+                                  String content) {
+                // When Http response code is '404'
+                if (statusCode == 404) {
+                    SingleBudgetDetailActivity.me().budgetItemRemoved("404");
+                }
+                // When Http response code is '500'
+                else if (statusCode == 500) {
+                    SingleBudgetDetailActivity.me().budgetItemRemoved("500");
+                }
+                // When Http response code other than 404, 500
+                else {
+                    SingleBudgetDetailActivity.me().budgetItemRemoved("connectivity");
+                }
+            }
+        });
+    }
+
+    public void removeBudgetShare(int id) {
+
+        final RequestParams params = new RequestParams();
+
+        params.put("id", String.valueOf(id));
+
+        AsyncHttpClient client = new AsyncHttpClient();
+
+        client.get(Utility.server + "/remove-budget-share", params, new AsyncHttpResponseHandler() {
+            // When the response returned by REST has Http response code '200'
+            @Override
+            public void onSuccess(String response) {
+
+                try {
+                    JSONObject obj = new JSONObject(response);
+
+                    if(obj.has("message")) {
+                        loadShares();
+                    }
+
+                } catch (JSONException e) {
+                    SingleBudgetDetailActivity.me().budgetItemRemoved("error");
+                }
+            }
+
+            // When the response returned by REST has Http response code other than '200'
+            @Override
+            public void onFailure(int statusCode, Throwable error,
+                                  String content) {
+                // When Http response code is '404'
+                if (statusCode == 404) {
+                }
+                // When Http response code is '500'
+                else if (statusCode == 500) {
+                }
+                // When Http response code other than 404, 500
+                else {
+                }
+            }
+        });
     }
 }

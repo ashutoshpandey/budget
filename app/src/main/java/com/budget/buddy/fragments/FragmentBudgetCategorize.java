@@ -82,6 +82,13 @@ public class FragmentBudgetCategorize extends Fragment{
 
     public void categorizeBudgetItems() {
 
+        if(budgetItems.size()==1 && budgetItems.get(0).getName().equals("No items added")){
+            budgetItemsToShow.add(budgetItems.get(0));
+            if(adapter!=null)
+                adapter.notifyDataSetChanged();
+            return;
+        }
+
         budgetItemsToShow.clear();
 
         // get budget items mapped to category names
@@ -139,20 +146,6 @@ public class FragmentBudgetCategorize extends Fragment{
         }
 
         return new AmountItemList(budgetItemsInCategory,amount);
-    }
-
-    private ArrayList<BudgetItem> getBudgetItems(String name) {
-
-        ArrayList<BudgetItem> budgetItemsInCategory = new ArrayList<>();
-
-        for(BudgetItem item : budgetItems) {
-
-            if(item.getCategoryName()!=null)
-                if (item.getCategoryName().toLowerCase().equals(name.toLowerCase()))
-                    budgetItemsInCategory.add(item);
-        }
-
-        return budgetItemsInCategory;
     }
 
     public void loadCategories(int customerId) {

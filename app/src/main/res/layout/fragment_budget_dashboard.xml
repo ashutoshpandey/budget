@@ -15,7 +15,7 @@
             android:layout_height="wrap_content">
 
             <TableRow
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent">
 
                 <ImageView
@@ -23,8 +23,43 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/imgViewAddItem"
                     android:src="@drawable/new_entry"
-                    android:layout_gravity="left" />
+                    android:padding="10dp"
+                    android:layout_marginRight="20dp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/imgViewShareBudget"
+                    android:src="@drawable/share"
+                    android:layout_marginRight="20dp"
+                    android:padding="10dp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/imgHistory"
+                    android:src="@drawable/history"
+                    android:visibility="visible"
+                    android:layout_marginRight="20dp"
+                    android:padding="10dp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/imgViewRemove"
+                    android:src="@drawable/remove"
+                    android:visibility="visible"
+                    android:layout_marginRight="20dp"
+                    android:padding="10dp" />
+
             </TableRow>
+
+        </TableLayout>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp">
 
             <TableRow
                 android:layout_width="match_parent"
@@ -38,17 +73,6 @@
                     android:id="@+id/tvBudgetName"
                     android:layout_weight="1"
                     android:text=" " />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/imgHistory"
-                    android:src="@drawable/history"
-                    android:visibility="gone"
-                    android:maxHeight="32dp"
-                    android:maxWidth="32dp"
-                    android:minHeight="32dp"
-                    android:minWidth="32dp" />
 
             </TableRow>
 

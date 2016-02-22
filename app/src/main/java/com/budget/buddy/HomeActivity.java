@@ -194,6 +194,17 @@ public class HomeActivity extends Activity {
         return;
     }
 
+    public void refreshShares() {
+        ((FragmentBudgetShare)fragmentBudgetShare).refreshBudgetShares();
+        refreshCounts();
+    }
+
+
+    public void refreshBudgets() {
+        ((FragmentBudget)fragmentBudget).refreshBudgets();
+        refreshCounts();
+    }
+
     /**
      * Slide menu item click listener
      * */
@@ -329,16 +340,6 @@ public class HomeActivity extends Activity {
         timer.schedule(timerTask, 2000, 60000);
     }
 
-    private void createBudget() {
-        Intent i = new Intent(HomeActivity.this, NewBudgetActivity.class);
-        startActivity(i);
-    }
-
-    private void profile() {
-        Intent i = new Intent(HomeActivity.this, ProfileActivity.class);
-        startActivity(i);
-    }
-
     private void logout(){
         finish();
     }
@@ -351,11 +352,11 @@ public class HomeActivity extends Activity {
         budgetService.loadBudgets();
     }
 
-    public void setBudgetCount() {
+    public void refreshCounts() {
         ((FragmentDashboard)fragmentDashboard).setBudgetCount();
         ((FragmentDashboard)fragmentDashboard).setBudgetShareCount();
         ((FragmentBudget)fragmentBudget).refreshBudgets();
-        ((FragmentBudgetShare)fragmentBudgetShare).refreshBudgets();
+        ((FragmentBudgetShare)fragmentBudgetShare).refreshBudgetShares();
     }
 
     public void setPaymentCount(int count) {
@@ -380,7 +381,7 @@ public class HomeActivity extends Activity {
                     budgetService.loadBudgets();
                     budgetService.loadShares();
 
-                    setBudgetCount();
+                    refreshCounts();
                 }});
         }
     }

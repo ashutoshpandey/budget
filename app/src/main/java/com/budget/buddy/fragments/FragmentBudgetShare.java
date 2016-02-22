@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.budget.buddy.HomeActivity;
 import com.budget.buddy.SingleBudgetActivity;
 import com.budget.buddy.adapter.BudgetShareAdapter;
 import com.budget.buddy.pojo.Budget;
@@ -28,6 +29,13 @@ public class FragmentBudgetShare extends Fragment{
 
     private ListView listView;
     private BudgetShareAdapter adapter;
+    private ArrayList<BudgetShare> budgetShares;
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        refreshBudgetShares();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,7 +44,7 @@ public class FragmentBudgetShare extends Fragment{
 
         listView = (ListView) rootView.findViewById(R.id.listViewBudgets);
 
-        ArrayList<BudgetShare> budgetShares = new ArrayList<>();
+        budgetShares = new ArrayList<>();
         for(Map.Entry<Integer, BudgetShare> entry : Utility.budgetShares.entrySet())
             budgetShares.add(entry.getValue());
 
@@ -77,8 +85,16 @@ public class FragmentBudgetShare extends Fragment{
         return rootView;
     }
 
-    public void refreshBudgets() {
-        if(adapter!=null)
+    public void refreshBudgetShares() {
+        if(adapter!=null) {
+
+            budgetShares.clear();
+            for(Map.Entry<Integer, BudgetShare> entry : Utility.budgetShares.entrySet())
+                budgetShares.add(entry.getValue());
+
             adapter.notifyDataSetChanged();
+        }
     }
+
+
 }
