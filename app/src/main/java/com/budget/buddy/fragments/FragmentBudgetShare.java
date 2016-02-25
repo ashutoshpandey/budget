@@ -40,9 +40,9 @@ public class FragmentBudgetShare extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_budgets, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_budget_shares, container, false);
 
-        listView = (ListView) rootView.findViewById(R.id.listViewBudgets);
+        listView = (ListView) rootView.findViewById(R.id.listViewBudgetShares);
 
         budgetShares = new ArrayList<>();
         for(Map.Entry<Integer, BudgetShare> entry : Utility.budgetShares.entrySet())

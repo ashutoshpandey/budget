@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -57,9 +58,13 @@ public class WelcomeActivity extends Activity {
         String name = etName.getText().toString();
         String phone = etPhone.getText().toString();
 
+        String deviceId = Settings.Secure.getString(this.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+System.out.println("device id = " + deviceId);
         RequestParams params = new RequestParams();
         params.put("name", name);
         params.put("phone", phone);
+        params.put("device_id", deviceId);
 
         AsyncHttpClient client = new AsyncHttpClient();
         client.post(Utility.server + "/create-customer", params, new AsyncHttpResponseHandler() {
@@ -67,14 +72,11 @@ public class WelcomeActivity extends Activity {
             public void onSuccess(String response) {
                 System.out.println(response);
                 try {
-                    // JSON Object
                     JSONObject obj = new JSONObject(response);
                     // When the JSON response has status boolean value assigned with true
 
                     if (obj.getString("message").equals("done")) {
 
-                        //JSONArray customerArray = obj.getJSONArray("customer");
-                        //JSONObject customer = customerArray.getJSONObject(0);
                         JSONObject customer = obj.getJSONObject("customer");
 
                         String id = customer.getString("id");
@@ -90,6 +92,27 @@ public class WelcomeActivity extends Activity {
                         writeCustomerDataToFile();
 
                         Toast.makeText(getApplicationContext(), "You are successfully registered", Toast.LENGTH_LONG).show();
+
+                        Intent i = new Intent(WelcomeActivity.this, HomeActivity.class);
+                        startActivity(i);
+                    }
+                    else if (obj.getString("message").equals("existing")) {
+
+                        JSONObject customer = obj.getJSONObject("customer");
+
+                        String id = customer.getString("id");
+                        String name = customer.getString("name");
+                        String phone = customer.getString("photo");
+                        String photo = customer.getString("photo");
+                        String status = customer.getString("status");
+                        String createdAt = customer.getString("created_at");
+
+                        Utility.customerId = id;
+                        Utility.customer = new Customer(id, name, phone, photo, status, createdAt);
+
+                        writeCustomerDataToFile();
+
+                        Toast.makeText(getApplicationContext(), "Welcome back to budget buddy", Toast.LENGTH_LONG).show();
 
                         Intent i = new Intent(WelcomeActivity.this, HomeActivity.class);
                         startActivity(i);
